@@ -1,0 +1,86 @@
+---
+description: Workflow Git bắt buộc cho project HRM — mỗi task một nhánh, done thì merge và push
+globs:
+alwaysApply: true
+---
+
+# Git Workflow (bắt buộc cho HRM_Epath)
+
+## Nguyên tắc vàng
+
+> **Mỗi task implementation = 1 nhánh git riêng. Done task = merge vào `main` + push lên origin.**
+
+Quy tắc này do người dùng đặt ra, **không được tự ý bỏ qua**. Khi AI nhận task mới (T12, T13, …) bắt buộc phải:
+
+1. Tạo nhánh mới từ `main` đã cập nhật.
+2. Commit thay đổi lên nhánh đó (không commit thẳng vào `main`).
+3. Sau khi verify (test pass, summary viết xong), merge nhánh vào `main` (fast-forward hoặc `--no-ff` để giữ lịch sử).
+4. Push `main` lên `origin` ngay trong cùng phiên, không để lại commit chưa push.
+
+## Quy ước nhánh
+
+| Loại | Mẫu | Ví dụ |
+|---|---|---|
+| Task chính | `feature/tNN-ten-viet-tat` | `feature/t11-system-admin-multi-tenant` |
+| Sửa bug | `fix/tNN-mo-ta-ngan` | `fix/t11-audit-aspect-null-snapshot` |
+| Docs / tiểu tác | `chore/mo-ta-ngan` | `chore/cleanup-target-dir` |
+
+Tên nhánh dùng **chữ thường**, gạch ngang `-`, **không dấu** — tránh ký tự Unicode.
+
+## Quy ước commit
+
+- Conventional Commits, tiếng Việt hoặc Anh đều được, **ưu tiên Anh + scope**:
+  - `feat: T11 thêm module system (company, role, user, audit)`
+  - `chore(db): V4–V6 migrations cho system schema và seed data`
+  - `test: thêm 8 test class cho module system (43 tests)`
+  - `docs: viết summary T11-system-admin-multi-tenant.md`
+- Mỗi commit phải build được. Không push commit lỗi.
+- Không push binary, `target/`, `.idea/`, `.env`, `*.log` — đã có trong `.gitignore`.
+
+## Quy trình chuẩn cho mỗi task mới (Tnn)
+
+```bash
+# 0. đảm bảo main sạch và cập nhật
+git checkout main
+git pull --rebase origin main   # nếu đã có remote
+
+# 1. tạo nhánh
+git checkout -b feature/tNN-ten-viet-tat
+
+# 2. triển khai, commit thay đổi theo nhóm logic
+git add <file>
+git commit -m "feat: ..."
+
+# 3. chạy test, viết summary
+mvn -q test -Dmaven.compiler.source=17 -Dmaven.compiler.target=17 -Dmaven.compiler.release=17
+
+# 4. merge & push
+git checkout main
+git merge --no-ff feature/tNN-ten-viet-tat -m "Merge feature/tNN-<ten>"
+git push origin main
+
+# 5. dọn nhánh local (giữ remote tùy thích)
+git branch -d feature/tNN-ten-viet-tat
+```
+
+## Khi AI nhận yêu cầu hiện task
+
+- Nếu đang ở nhánh `main` mà chưa có branch task: hỏi hoặc tự tạo branch `feature/tNN-...` rồi mới sửa file.
+- Không bao giờ `git push --force` lên `main`.
+- Không bao giờ `git commit --amend` nếu commit đã push.
+- Nếu user không yêu cầu tạo commit, **chỉ thực hiện các thao tác trên staging** (`git add`); đợi user ra lệnh rõ ràng trước khi `commit`/`merge`/`push`.
+
+## Lệnh chuẩn khi push (Windows / PowerShell)
+
+```bash
+cd "D:\LP & EP IT\HRM"
+git checkout main
+git push -u origin main
+```
+
+Nếu lần đầu push, Git có thể hỏi credentials; AI phải **dừng lại hỏi người dùng**, không bịa token/PAT.
+
+## Remote mặc định
+
+- `origin` = `https://github.com/Min-Trees/HRM_Epath.git`
+- Nếu thay đổi remote, cập nhật quy tắc này.
