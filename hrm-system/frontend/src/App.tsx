@@ -4,6 +4,7 @@ import OffboardingDetailPage from "./offboarding/OffboardingDetailPage";
 import BhxhReportPage from "./bhxh/BhxhReportPage";
 import QuyetToanThuePage from "./tax/QuyetToanThuePage";
 import RecruitmentListPage from "./recruitment/RecruitmentListPage";
+import KpiPage from "./performance/KpiPage";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/bhxh/reports" element={<BhxhReportPage />} />
           <Route path="/tax/qtt" element={<QuyetToanThuePage />} />
           <Route path="/recruitment" element={<RecruitmentListPage />} />
+          <Route path="/performance/kpi" element={<KpiPage />} />
         </Routes>
       </div>
     </HashRouter>
@@ -33,6 +35,7 @@ function Dashboard() {
         <li><a href="#/bhxh/reports">BHXH Reports - D02-LT, D03-LT (T15)</a></li>
         <li><a href="#/tax/qtt">Quyết toán thuế TNCN - 02/QTT, 05/QTT (T16)</a></li>
         <li><a href="#/recruitment">Tuyển dụng (T17)</a></li>
+        <li><a href="#/performance/kpi">Đánh giá hiệu suất KPI/OKR (T18)</a></li>
       </ul>
     </div>
   );
