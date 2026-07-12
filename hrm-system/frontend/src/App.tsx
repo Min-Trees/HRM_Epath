@@ -6,6 +6,7 @@ import QuyetToanThuePage from "./tax/QuyetToanThuePage";
 import RecruitmentListPage from "./recruitment/RecruitmentListPage";
 import KpiPage from "./performance/KpiPage";
 import PayrollRunPage from "./payroll/PayrollRunPage";
+import TrainingPage from "./training/TrainingPage";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/recruitment" element={<RecruitmentListPage />} />
           <Route path="/performance/kpi" element={<KpiPage />} />
           <Route path="/payroll/run" element={<PayrollRunPage />} />
+          <Route path="/training" element={<TrainingPage />} />
         </Routes>
       </div>
     </HashRouter>
@@ -39,6 +41,7 @@ function Dashboard() {
         <li><a href="#/recruitment">Tuyển dụng (T17)</a></li>
         <li><a href="#/performance/kpi">Đánh giá hiệu suất KPI/OKR (T18)</a></li>
         <li><a href="#/payroll/run">Payroll Run - Workflow kỳ lĩnh (T19)</a></li>
+        <li><a href="#/training">Đào tạo - Training (T20)</a></li>
       </ul>
     </div>
   );
