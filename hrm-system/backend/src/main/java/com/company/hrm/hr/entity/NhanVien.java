@@ -83,6 +83,10 @@ public class NhanVien extends BaseAuditEntity {
     @Column(name = "company_id")
     private UUID companyId;
 
+    /** Ma so thue ca nhan (T16 - QTT thue TNCN). */
+    @Column(name = "ma_so_thue", length = 20)
+    private String maSoThue;
+
     public enum GioiTinh { NAM, NU, KHAC }
 
     public enum TrangThaiNv {
@@ -132,4 +136,6 @@ public class NhanVien extends BaseAuditEntity {
     public void setTaiKhoanChamCongId(String taiKhoanChamCongId) { this.taiKhoanChamCongId = taiKhoanChamCongId; }
     public UUID getCompanyId() { return companyId; }
     public void setCompanyId(UUID companyId) { this.companyId = companyId; }
+    public String getMaSoThue() { return maSoThue; }
+    public void setMaSoThue(String maSoThue) { this.maSoThue = maSoThue; }
 }
