@@ -5,6 +5,7 @@ import BhxhReportPage from "./bhxh/BhxhReportPage";
 import QuyetToanThuePage from "./tax/QuyetToanThuePage";
 import RecruitmentListPage from "./recruitment/RecruitmentListPage";
 import KpiPage from "./performance/KpiPage";
+import PayrollRunPage from "./payroll/PayrollRunPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/tax/qtt" element={<QuyetToanThuePage />} />
           <Route path="/recruitment" element={<RecruitmentListPage />} />
           <Route path="/performance/kpi" element={<KpiPage />} />
+          <Route path="/payroll/run" element={<PayrollRunPage />} />
         </Routes>
       </div>
     </HashRouter>
@@ -36,6 +38,7 @@ function Dashboard() {
         <li><a href="#/tax/qtt">Quyết toán thuế TNCN - 02/QTT, 05/QTT (T16)</a></li>
         <li><a href="#/recruitment">Tuyển dụng (T17)</a></li>
         <li><a href="#/performance/kpi">Đánh giá hiệu suất KPI/OKR (T18)</a></li>
+        <li><a href="#/payroll/run">Payroll Run - Workflow kỳ lĩnh (T19)</a></li>
       </ul>
     </div>
   );
