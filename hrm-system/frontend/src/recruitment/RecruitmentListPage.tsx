@@ -35,11 +35,11 @@ export default function RecruitmentListPage() {
 
   return (
     <div style={{ padding: 24, fontFamily: "system-ui, sans-serif" }}>
-      <h2>Module Tuyển dụng (T17)</h2>
-      <p style={{ color: "#64748b" }}>Yêu cầu TD · Ứng viên · Phỏng vấn · Quyết định tuyển</p>
+      <h2>Phân hệ Tuyển dụng (T17)</h2>
+      <p style={{ color: "#64748b" }}>Yêu cầu tuyển dụng · Ứng viên · Phỏng vấn · Quyết định tuyển dụng</p>
 
       <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-        <TabBtn active={tab === "yeu-cau"} onClick={() => setTab("yeu-cau")}>Yêu cầu TD ({yeuCauList.length})</TabBtn>
+        <TabBtn active={tab === "yeu-cau"} onClick={() => setTab("yeu-cau")}>Yêu cầu tuyển dụng ({yeuCauList.length})</TabBtn>
         <TabBtn active={tab === "ung-vien"} onClick={() => setTab("ung-vien")}>Ứng viên ({ungVienList.length})</TabBtn>
         <TabBtn active={tab === "phong-van"} onClick={() => setTab("phong-van")}>Phỏng vấn ({lichPVList.length})</TabBtn>
         <TabBtn active={tab === "quyet-dinh"} onClick={() => setTab("quyet-dinh")}>Quyết định ({quyetDinhList.length})</TabBtn>
@@ -53,9 +53,9 @@ export default function RecruitmentListPage() {
               <tr style={{ background: "#f1f5f9" }}>
                 <th style={th}>Mã</th>
                 <th style={th}>Tiêu đề</th>
-                <th style={th}>SL cần</th>
+                <th style={th}>Số lượng cần tuyển</th>
                 <th style={th}>Trạng thái</th>
-                <th style={th}>SL UV</th>
+                <th style={th}>Số ứng viên</th>
                 <th style={th}>Hành động</th>
               </tr>
             </thead>
@@ -68,7 +68,7 @@ export default function RecruitmentListPage() {
                   <td style={td}><StatusChip status={yc.trangThai} /></td>
                   <td style={td}>{yc.soUngVien}</td>
                   <td style={td}>
-                    <button onClick={() => onSelectYC(yc)} style={btn}>Xem UV</button>
+                    <button onClick={() => onSelectYC(yc)} style={btn}>Xem ứng viên</button>
                   </td>
                 </tr>
               ))}
@@ -86,10 +86,10 @@ export default function RecruitmentListPage() {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ background: "#f1f5f9" }}>
-                <th style={th}>Mã UV</th>
+                <th style={th}>Mã ứng viên</th>
                 <th style={th}>Họ tên</th>
                 <th style={th}>Email</th>
-                <th style={th}>SĐT</th>
+                <th style={th}>Số điện thoại</th>
                 <th style={th}>Kinh nghiệm</th>
                 <th style={th}>Trạng thái</th>
                 <th style={th}>Hành động</th>
@@ -105,7 +105,7 @@ export default function RecruitmentListPage() {
                   <td style={td}>{uv.soNamKinhNghiem ?? 0} năm</td>
                   <td style={td}><StatusChip status={uv.trangThai} /></td>
                   <td style={td}>
-                    <button onClick={() => onSelectUV(uv)} style={btn}>Xem PV/QĐ</button>
+                    <button onClick={() => onSelectUV(uv)} style={btn}>Xem phỏng vấn/quyết định</button>
                   </td>
                 </tr>
               ))}
@@ -152,11 +152,11 @@ export default function RecruitmentListPage() {
 
       {tab === "quyet-dinh" && (
         <section style={{ background: "#fff", padding: 16, borderRadius: 8 }}>
-          <h3>Quyết định tuyển {selectedUV ? `(${selectedUV.hoTen})` : ""}</h3>
+          <h3>Quyết định tuyển dụng {selectedUV ? `(${selectedUV.hoTen})` : ""}</h3>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ background: "#f1f5f9" }}>
-                <th style={th}>Loại HĐ</th>
+                <th style={th}>Loại hợp đồng</th>
                 <th style={th}>Mức lương</th>
                 <th style={th}>Ngày vào làm</th>
                 <th style={th}>Phòng ban</th>
@@ -221,8 +221,29 @@ function StatusChip({ status }: { status: string }) {
     CHO_PHAN_HOI: "#f59e0b",
     DA_DONG_Y: "#10b981",
   };
+  const labelMap: Record<string, string> = {
+    MOI_TAO: "Mới tạo",
+    CHO_PHE_DUYET: "Chờ phê duyệt",
+    DA_PHE_DUYET: "Đã phê duyệt",
+    DANG_TUYEN: "Đang tuyển",
+    DA_DONG: "Đã đóng",
+    HUY: "Hủy",
+    MOI_NOP_HO_SO: "Mới nộp hồ sơ",
+    CHO_PHONG_VAN_VONG_1: "Chờ phỏng vấn vòng 1",
+    CHO_PHONG_VAN_VONG_2: "Chờ phỏng vấn vòng 2",
+    CHO_DANH_GIA: "Chờ đánh giá",
+    DE_NGHI_TUYEN: "Đề nghị tuyển",
+    TU_CHOI: "Từ chối",
+    RUT_HO_SO: "Rút hồ sơ",
+    DA_TUYEN: "Đã tuyển",
+    CHUA_DIEN_RA: "Chưa diễn ra",
+    DANG_DIEN_RA: "Đang diễn ra",
+    HOAN_THANH: "Hoàn thành",
+    CHO_PHAN_HOI: "Chờ phản hồi",
+    DA_DONG_Y: "Đã đồng ý",
+  };
   const color = colorMap[status] ?? "#64748b";
-  return <span style={{ background: color, color: "#fff", padding: "2px 8px", borderRadius: 12, fontSize: 12 }}>{status}</span>;
+  return <span style={{ background: color, color: "#fff", padding: "2px 8px", borderRadius: 12, fontSize: 12 }}>{labelMap[status] ?? status}</span>;
 }
 
 const th: React.CSSProperties = { padding: 10, textAlign: "left" };
