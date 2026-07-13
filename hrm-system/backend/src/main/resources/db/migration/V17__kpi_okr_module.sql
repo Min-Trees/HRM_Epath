@@ -118,10 +118,7 @@ CREATE TABLE performance.kpi_review (
     nguoi_review_id   UUID NOT NULL REFERENCES hr.nhan_vien(nhan_vien_id),
     actual_value      NUMERIC(18,2),                   -- manager xac nhan
     diem_manager      NUMERIC(5,2) NOT NULL CHECK (diem_manager BETWEEN 0 AND 100),
-    diem_trung_binh   NUMERIC(5,2) GENERATED ALWAYS AS (
-        (COALESCE((SELECT diem_tu_danh_gia FROM performance.kpi_self_assessment WHERE assignment_id = kpi_review.assignment_id), 0) * 0.4
-         + COALESCE(kpi_review.diem_manager, 0) * 0.6)
-    ) STORED,
+    diem_trung_binh   NUMERIC(5,2),  -- tinh o service (60% manager + 40% self_assessment)
     nhan_xet_manager  TEXT,
     diem_manh         TEXT,
     diem_yeu          TEXT,

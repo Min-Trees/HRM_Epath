@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { trainingMock } from "../mock/training.mock";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -29,9 +29,14 @@ export default function TrainingPage() {
   const [selectedLop, setSelectedLop] = useState<any>(null);
 
   const refresh = async () => {
-    setChuongTrinh(await trainingMock.listChuongTrinh());
-    setLopHoc(await trainingMock.listLop());
-    setDangKy(await trainingMock.listDangKy());
+    const [ct, lop, dk] = await Promise.all([
+      trainingMock.listChuongTrinh() as Promise<any[]>,
+      trainingMock.listLop() as Promise<any[]>,
+      trainingMock.listDangKy() as Promise<any[]>,
+    ]);
+    setChuongTrinh(ct);
+    setLopHoc(lop);
+    setDangKy(dk);
   };
   useEffect(() => { refresh(); }, []);
 

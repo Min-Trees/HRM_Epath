@@ -2,6 +2,8 @@ package com.company.hrm.system.entity;
 
 import com.company.hrm.common.audit.BaseAuditEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.OffsetDateTime;
 import java.util.Arrays;
@@ -46,7 +48,8 @@ public class UserAccount extends BaseAuditEntity {
     private String roleCodes = "";
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "trang_thai", nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "trang_thai", nullable = false, columnDefinition = "system.trang_thai_user_account")
     private TrangThaiUserAccount trangThai = TrangThaiUserAccount.ACTIVE;
 
     @Column(name = "last_login_at")

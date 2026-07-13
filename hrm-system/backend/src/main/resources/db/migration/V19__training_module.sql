@@ -11,6 +11,8 @@
 --          trang_thai_dang_ky, trang_thai_tham_du, ket_qua_danh_gia
 -- =====================================================================
 
+CREATE SCHEMA IF NOT EXISTS training;
+
 CREATE TYPE training.trang_thai_chuong_trinh AS ENUM (
     'NHAP',
     'CONG_BO',
@@ -144,8 +146,7 @@ CREATE TABLE training.danh_gia_sau_dao_tao (
     diem_noi_dung     NUMERIC(4,2) CHECK (diem_noi_dung BETWEEN 0 AND 100),
     diem_giang_vien   NUMERIC(4,2) CHECK (diem_giang_vien BETWEEN 0 AND 100),
     diem_thuc_hanh    NUMERIC(4,2) CHECK (diem_thuc_hanh BETWEEN 0 AND 100),
-    diem_trung_binh   NUMERIC(4,2) GENERATED ALWAYS AS
-        (COALESCE(diem_noi_dung,0) * 0.4 + COALESCE(diem_giang_vien,0) * 0.3 + COALESCE(diem_thuc_hanh,0) * 0.3) STORED,
+    diem_trung_binh   NUMERIC(4,2),  -- tinh o service (40% noi dung + 30% GV + 30% thuc hanh)
     ket_qua           training.ket_qua_danh_gia NOT NULL DEFAULT 'TRUNG_BINH',
     y_kien_nguoi_hoc  TEXT,
     y_kien_gv         TEXT,
