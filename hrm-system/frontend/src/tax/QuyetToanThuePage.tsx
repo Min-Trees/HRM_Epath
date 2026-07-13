@@ -5,7 +5,7 @@ export default function QuyetToanThuePage() {
   const [tab, setTab] = useState<"02" | "05">("02");
   const [nam, setNam] = useState(new Date().getFullYear() - 1);
   const [maDonVi, setMaDonVi] = useState("DV-001");
-  const [tenDonVi, setTenDonVi] = useState("Cong ty TNHH ABC");
+  const [tenDonVi, setTenDonVi] = useState("Công ty TNHH ABC");
   const [maSoThue, setMaSoThue] = useState("0123456789");
   const [report, setReport] = useState<any>(null);
   const [xmlContent, setXmlContent] = useState<string>("");
@@ -49,11 +49,11 @@ export default function QuyetToanThuePage() {
   return (
     <div style={{ padding: 24, fontFamily: "system-ui, sans-serif" }}>
       <h2>Quyết toán thuế TNCN (T16)</h2>
-      <p style={{ color: "#64748b" }}>Theo Thông tư 92/2015/TT-BTC. Cam kết 08 đăng ký trước 31/3 năm sau.</p>
+      <p style={{ color: "#64748b" }}>Theo Thông tư 92/2015/TT-BTC. Cam kết 08/CK-TNCN đăng ký trước ngày 31/3 năm sau.</p>
 
       <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-        <button onClick={() => setTab("02")} style={tabBtn(tab === "02")}>Mẫu 02/QTT (Tổng hợp DN)</button>
-        <button onClick={() => setTab("05")} style={tabBtn(tab === "05")}>Mẫu 05/QTT (Chi tiết NV)</button>
+        <button onClick={() => setTab("02")} style={tabBtn(tab === "02")}>Mẫu 02/QTT (Tổng hợp doanh nghiệp)</button>
+        <button onClick={() => setTab("05")} style={tabBtn(tab === "05")}>Mẫu 05/QTT (Chi tiết nhân viên)</button>
       </div>
 
       <section style={{ background: "#fff", padding: 16, borderRadius: 8, marginBottom: 16 }}>
@@ -76,7 +76,7 @@ export default function QuyetToanThuePage() {
           </div>
           {tab === "05" && (
             <div>
-              <label style={lbl}>Mã NV</label>
+              <label style={lbl}>Mã nhân viên</label>
               <input value={report?.maNv || "NV-001"} onChange={(e) => setReport({ ...(report || {}), maNv: e.target.value })} style={inp} />
             </div>
           )}
@@ -92,12 +92,12 @@ export default function QuyetToanThuePage() {
       {xmlContent && (
         <section style={{ background: "#1e293b", color: "#e2e8f0", padding: 16, borderRadius: 8, marginTop: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <h3 style={{ margin: 0 }}>XML Preview</h3>
+            <h3 style={{ margin: 0 }}>Xem trước XML</h3>
             <button onClick={downloadXml} style={{ ...btn, background: "#3b82f6" }}>Tải XML</button>
           </div>
           <pre style={{ maxHeight: 400, overflow: "auto", fontSize: 12, lineHeight: 1.4 }}>
             {xmlContent.slice(0, 4000)}
-            {xmlContent.length > 4000 ? "\n... (truncated)" : ""}
+            {xmlContent.length > 4000 ? "\n... (đã rút gọn)" : ""}
           </pre>
         </section>
       )}
@@ -110,26 +110,26 @@ function Mau02View({ report }: { report: any }) {
     <section style={{ background: "#fff", padding: 16, borderRadius: 8, marginBottom: 16 }}>
       <h3>Mẫu 02/QTT-TNCN - Năm {report.nam}</h3>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
-        <StatBox label="Tổng số NV" value={report.tongSoNhanVien} />
-        <StatBox label="NV ủy quyền" value={report.tongNhanVienUyQuyen} highlight />
-        <StatBox label="NV tự QTT" value={report.tongNhanVienTuQtt} />
-        <StatBox label="Tổng TN chịu thuế" value={fmtVND(report.tongThuNhapChiuThue)} />
+        <StatBox label="Tổng số nhân viên" value={report.tongSoNhanVien} />
+        <StatBox label="Nhân viên ủy quyền" value={report.tongNhanVienUyQuyen} highlight />
+        <StatBox label="Nhân viên tự quyết toán thuế" value={report.tongNhanVienTuQtt} />
+        <StatBox label="Tổng thu nhập chịu thuế" value={fmtVND(report.tongThuNhapChiuThue)} />
         <StatBox label="Tổng giảm trừ bản thân" value={fmtVND(report.tongGiamTruBanThan)} />
-        <StatBox label="Tổng giảm trừ NPT" value={fmtVND(report.tongGiamTruNguoiPhuThuoc)} />
+        <StatBox label="Tổng giảm trừ người phụ thuộc" value={fmtVND(report.tongGiamTruNguoiPhuThuoc)} />
         <StatBox label="Tổng thuế đã khấu trừ" value={fmtVND(report.tongThueDaKhauTru)} highlight />
         <StatBox label="Tổng thuế phải nộp thêm" value={fmtVND(report.tongThuePhaiNopThem)} />
         <StatBox label="Tổng thuế được hoàn" value={fmtVND(report.tongThueDuocHoan)} />
       </div>
 
-      <h4 style={{ marginTop: 24 }}>Top NV có thuế cao</h4>
+      <h4 style={{ marginTop: 24 }}>Nhân viên có mức thuế cao nhất</h4>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr style={{ background: "#f1f5f9" }}>
             <th style={th}>STT</th>
-            <th style={th}>Mã NV</th>
+            <th style={th}>Mã nhân viên</th>
             <th style={th}>Họ tên</th>
             <th style={th}>MST</th>
-            <th style={th}>TN chịu thuế</th>
+            <th style={th}>Thu nhập chịu thuế</th>
             <th style={th}>Thuế đã khấu trừ</th>
             <th style={th}>Thuế phải nộp</th>
           </tr>
@@ -159,12 +159,12 @@ function Mau05View({ report }: { report: any }) {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 16 }}>
         <StatBox label="MST" value={report.maSoThue || "-"} />
         <StatBox label="CCCD" value={report.cmnd || "-"} />
-        <StatBox label="Loại cam kết 08" value={report.loaiCamKet08} highlight />
-        <StatBox label="Số NPT" value={report.soNguoiPhuThuoc} />
-        <StatBox label="Tổng TN cả năm" value={fmtVND(report.tongThuNhapCaNam)} />
-        <StatBox label="Tổng TN chịu thuế" value={fmtVND(report.tongThuNhapChiuThue)} />
+        <StatBox label="Cam kết 08/CK-TNCN" value={report.loaiCamKet08} highlight />
+        <StatBox label="Số người phụ thuộc" value={report.soNguoiPhuThuoc} />
+        <StatBox label="Tổng thu nhập cả năm" value={fmtVND(report.tongThuNhapCaNam)} />
+        <StatBox label="Tổng thu nhập chịu thuế" value={fmtVND(report.tongThuNhapChiuThue)} />
         <StatBox label="Tổng giảm trừ bản thân" value={fmtVND(report.giamTruBanThan)} />
-        <StatBox label="Tổng giảm trừ NPT" value={fmtVND(report.giamTruNguoiPhuThuoc)} />
+        <StatBox label="Tổng giảm trừ người phụ thuộc" value={fmtVND(report.giamTruNguoiPhuThuoc)} />
         <StatBox label="Tổng thuế đã khấu trừ" value={fmtVND(report.tongThueDaKhauTru)} highlight />
       </div>
 
@@ -173,9 +173,9 @@ function Mau05View({ report }: { report: any }) {
         <thead>
           <tr style={{ background: "#f1f5f9" }}>
             <th style={th}>Tháng</th>
-            <th style={th}>TN chịu thuế</th>
+            <th style={th}>Thu nhập chịu thuế</th>
             <th style={th}>Giảm trừ bản thân</th>
-            <th style={th}>Giảm trừ NPT</th>
+            <th style={th}>Giảm trừ người phụ thuộc</th>
             <th style={th}>Thuế đã khấu trừ</th>
           </tr>
         </thead>
