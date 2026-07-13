@@ -14,7 +14,24 @@ const STATUS_COLORS: Record<string, string> = {
   XUAT_SAC: "#059669", TOT: "#10b981", TRUNG_BINH: "#3b82f6", YEU: "#ef4444", KHONG_DANH_GIA: "#94a3b8",
 };
 
+const STATUS_LABELS: Record<string, string> = {
+  NHAP: "Nháp", CONG_BO: "Công bố", NGUNG: "Ngừng",
+  MO_DANG_KY: "Mở đăng ký", DONG_DANG_KY: "Đóng đăng ký", DANG_DIEN_RA: "Đang diễn ra", HOAN_THANH: "Hoàn thành", HUY: "Hủy",
+  CHO_DUYET: "Chờ duyệt", DA_CHAP_NHAN: "Đã chấp nhận", TU_CHOI: "Từ chối",
+  CHUA_DI_HOC: "Chưa đi học", CO_MAT: "Có mặt", VANG: "Vắng", VANG_CO_PHEP: "Vắng có phép",
+  XUAT_SAC: "Xuất sắc", TOT: "Tốt", TRUNG_BINH: "Trung bình", YEU: "Yếu", KHONG_DANH_GIA: "Không đánh giá",
+};
+
 const LOAI_OPTIONS = ["KY_NANG_MEM","KY_NANG_CHUYEN_MON","AN_TOAN_LAO_DONG","LANG_DAO_VAN_HOA","QUAN_LY","CHUNG_CHI_BAT_BUOC","KHAC"];
+const LOAI_LABELS: Record<string, string> = {
+  KY_NANG_MEM: "Kỹ năng mềm",
+  KY_NANG_CHUYEN_MON: "Kỹ năng chuyên môn",
+  AN_TOAN_LAO_DONG: "An toàn lao động",
+  LANG_DAO_VAN_HOA: "Lãnh đạo và văn hóa",
+  QUAN_LY: "Quản lý",
+  CHUNG_CHI_BAT_BUOC: "Chứng chỉ bắt buộc",
+  KHAC: "Khác",
+};
 
 export default function TrainingPage() {
   const [tab, setTab] = useState<"ct" | "lop" | "dk" | "dg">("ct");
@@ -73,21 +90,21 @@ export default function TrainingPage() {
 
   return (
     <div style={{ padding: 24, fontFamily: "system-ui, sans-serif" }}>
-      <h2>Module Đào tạo (T20)</h2>
-      <p style={{ color: "#64748b" }}>Chương trình → Lớp học → Đăng ký → Điểm danh → Đánh giá.</p>
+      <h2>Phân hệ Đào tạo nội bộ (T20)</h2>
+      <p style={{ color: "#64748b" }}>Chương trình đào tạo → Lớp đào tạo → Đăng ký → Điểm danh → Đánh giá sau đào tạo.</p>
 
       <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-        <Tab active={tab === "ct"} onClick={() => setTab("ct")}>Chương trình ({chuongTrinh.length})</Tab>
-        <Tab active={tab === "lop"} onClick={() => setTab("lop")}>Lớp học ({lopHoc.length})</Tab>
+        <Tab active={tab === "ct"} onClick={() => setTab("ct")}>Chương trình đào tạo ({chuongTrinh.length})</Tab>
+        <Tab active={tab === "lop"} onClick={() => setTab("lop")}>Lớp đào tạo ({lopHoc.length})</Tab>
         <Tab active={tab === "dk"} onClick={() => setTab("dk")}>Đăng ký ({dangKy.length})</Tab>
-        <Tab active={tab === "dg"} onClick={() => setTab("dg")}>Đánh giá</Tab>
+        <Tab active={tab === "dg"} onClick={() => setTab("dg")}>Đánh giá sau đào tạo</Tab>
       </div>
 
       {tab === "ct" && (
         <Section>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <h3>Danh sách chương trình</h3>
-            <button onClick={() => setShowCtForm(true)} style={btnPrimary}>+ Tạo chương trình</button>
+            <h3>Danh sách chương trình đào tạo</h3>
+            <button onClick={() => setShowCtForm(true)} style={btnPrimary}>+ Tạo chương trình đào tạo</button>
           </div>
           <table style={table}>
             <thead>
@@ -95,8 +112,8 @@ export default function TrainingPage() {
                 <th style={th}>Mã</th>
                 <th style={th}>Tên chương trình</th>
                 <th style={th}>Loại</th>
-                <th style={th}>Giờ</th>
-                <th style={th}>Ngưỡng đậu</th>
+                <th style={th}>Thời lượng</th>
+                <th style={th}>Điểm đạt tối thiểu</th>
                 <th style={th}>Trạng thái</th>
                 <th style={th}>Hành động</th>
               </tr>
@@ -106,11 +123,11 @@ export default function TrainingPage() {
                 <tr key={c.id} style={tr}>
                   <td style={td}>{c.maChuongTrinh}</td>
                   <td style={td}>{c.tenChuongTrinh}</td>
-                  <td style={td}>{c.loaiChuongTrinh}</td>
-                  <td style={td}>{c.thoiLuongGio}h</td>
+                  <td style={td}>{LOAI_LABELS[c.loaiChuongTrinh] ?? c.loaiChuongTrinh}</td>
+                  <td style={td}>{c.thoiLuongGio} giờ</td>
                   <td style={td}>{c.diemDanhGiaToiThieu}</td>
                   <td style={td}>
-                    <span style={{ ...chip, background: STATUS_COLORS[c.trangThai] }}>{c.trangThai}</span>
+                    <span style={{ ...chip, background: STATUS_COLORS[c.trangThai] }}>{STATUS_LABELS[c.trangThai] ?? c.trangThai}</span>
                   </td>
                   <td style={td}>
                     {c.trangThai === "NHAP" && <button onClick={() => ctPublish(c.id)} style={{ ...btn, background: "#0d9488" }}>📣 Công bố</button>}
@@ -126,13 +143,13 @@ export default function TrainingPage() {
       {tab === "lop" && (
         <Section>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <h3>Danh sách lớp học</h3>
+            <h3>Danh sách lớp đào tạo</h3>
             <button onClick={() => setShowLopForm(true)} disabled={chuongTrinh.filter((c) => c.trangThai === "CONG_BO").length === 0}
-                    style={btnPrimary}>+ Tạo lớp</button>
+                    style={btnPrimary}>+ Tạo lớp đào tạo</button>
           </div>
           <table style={table}>
             <thead><tr style={thead}>
-              <th style={th}>Mã lớp</th><th style={th}>Tên lớp</th><th style={th}>Chương trình</th>
+              <th style={th}>Mã lớp</th><th style={th}>Tên lớp</th><th style={th}>Chương trình đào tạo</th>
               <th style={th}>Thời gian</th><th style={th}>Sĩ số</th><th style={th}>Trạng thái</th><th style={th}>Hành động</th>
             </tr></thead>
             <tbody>
@@ -145,7 +162,7 @@ export default function TrainingPage() {
                     <td style={td}>{ct?.tenChuongTrinh || "?"}</td>
                     <td style={td}>{l.ngayBatDau} → {l.ngayKetThuc}</td>
                     <td style={td}>{l.soChoToiDa}</td>
-                    <td style={td}><span style={{ ...chip, background: STATUS_COLORS[l.trangThai] }}>{l.trangThai}</span></td>
+                    <td style={td}><span style={{ ...chip, background: STATUS_COLORS[l.trangThai] }}>{STATUS_LABELS[l.trangThai] ?? l.trangThai}</span></td>
                     <td style={td}>{renderLopActions(l, lopTransition)}</td>
                   </tr>
                 );
@@ -165,8 +182,8 @@ export default function TrainingPage() {
           </div>
           <table style={table}>
             <thead><tr style={thead}>
-              <th style={th}>NV</th><th style={th}>Lớp</th><th style={th}>Ngày đăng ký</th>
-              <th style={th}>Trạng thái</th><th style={th}>Điểm</th><th style={th}>CC</th><th style={th}>Hành động</th>
+              <th style={th}>Nhân viên</th><th style={th}>Lớp đào tạo</th><th style={th}>Ngày đăng ký</th>
+              <th style={th}>Trạng thái</th><th style={th}>Điểm</th><th style={th}>Chứng chỉ</th><th style={th}>Hành động</th>
             </tr></thead>
             <tbody>
               {dangKy.map((d) => {
@@ -176,7 +193,7 @@ export default function TrainingPage() {
                     <td style={td}>{d.nhanVienId?.slice(0, 8)}</td>
                     <td style={td}>{lop?.tenLop || "?"}</td>
                     <td style={td}>{d.ngayDangKy?.slice(0, 10)}</td>
-                    <td style={td}><span style={{ ...chip, background: STATUS_COLORS[d.trangThai] }}>{d.trangThai}</span></td>
+                    <td style={td}><span style={{ ...chip, background: STATUS_COLORS[d.trangThai] }}>{STATUS_LABELS[d.trangThai] ?? d.trangThai}</span></td>
                     <td style={td}>{d.diemTongKet ?? "-"}</td>
                     <td style={td}>{d.chungChiCap ?? "-"}</td>
                     <td style={td}>
@@ -201,16 +218,16 @@ export default function TrainingPage() {
       {tab === "dg" && (
         <Section>
           <h3>Đánh giá sau đào tạo</h3>
-          <p style={{ color: "#64748b" }}>Vào tab "Đăng ký" và nhấn nút "📝 Đánh giá" trên một đăng ký đã được chấp nhận để mở form đánh giá.</p>
+          <p style={{ color: "#64748b" }}>Vào mục "Đăng ký" và nhấn nút "📝 Đánh giá" trên một đăng ký đã được chấp nhận để mở biểu mẫu đánh giá.</p>
           <div style={{ background: "#f8fafc", padding: 12, borderRadius: 6, marginTop: 12 }}>
             <strong>Tổng kết:</strong>
             <ul>
-              <li>Số chương trình: {chuongTrinh.length}</li>
-              <li>Số lớp học: {lopHoc.length}</li>
+              <li>Số chương trình đào tạo: {chuongTrinh.length}</li>
+              <li>Số lớp đào tạo: {lopHoc.length}</li>
               <li>Số đăng ký: {dangKy.length}</li>
               <li>Đã chấp nhận: {dangKy.filter((d) => d.trangThai === "DA_CHAP_NHAN").length}</li>
               <li>Đã đánh giá: {dangKy.filter((d) => d.diemTongKet).length}</li>
-              <li>Cấp chứng chỉ: {dangKy.filter((d) => d.chungChiCap).length}</li>
+              <li>Đã cấp chứng chỉ: {dangKy.filter((d) => d.chungChiCap).length}</li>
             </ul>
           </div>
         </Section>
@@ -221,7 +238,7 @@ export default function TrainingPage() {
 
 function renderLopActions(l: any, lopTransition: (id: string, s: string) => void) {
   const buttons: any[] = [];
-  if (l.trangThai === "MO_DANG_KY") buttons.push(<button key="dong" onClick={() => lopTransition(l.id, "DONG_DANG_KY")} style={{ ...btn, background: "#f59e0b" }}>🔒 Đóng ĐK</button>);
+  if (l.trangThai === "MO_DANG_KY") buttons.push(<button key="dong" onClick={() => lopTransition(l.id, "DONG_DANG_KY")} style={{ ...btn, background: "#f59e0b" }}>🔒 Đóng đăng ký</button>);
   if (l.trangThai === "DONG_DANG_KY") buttons.push(<button key="batdau" onClick={() => lopTransition(l.id, "DANG_DIEN_RA")} style={{ ...btn, background: "#3b82f6" }}>▶ Bắt đầu</button>);
   if (l.trangThai === "DANG_DIEN_RA") buttons.push(<button key="ht" onClick={() => lopTransition(l.id, "HOAN_THANH")} style={{ ...btn, background: "#059669" }}>✓ Hoàn thành</button>);
   if (["MO_DANG_KY","DONG_DANG_KY","DANG_DIEN_RA"].includes(l.trangThai)) buttons.push(<button key="huy" onClick={() => lopTransition(l.id, "HUY")} style={{ ...btn, background: "#ef4444", marginLeft: 4 }}>✕</button>);
@@ -233,10 +250,10 @@ function ChuongTrinhForm({ onSubmit, onCancel }: any) {
   return <Modal onClose={onCancel} title="Tạo chương trình đào tạo">
     <Field label="Mã chương trình"><input value={form.maChuongTrinh} onChange={(e) => setForm({...form, maChuongTrinh: e.target.value})} style={inp} /></Field>
     <Field label="Tên chương trình"><input value={form.tenChuongTrinh} onChange={(e) => setForm({...form, tenChuongTrinh: e.target.value})} style={inp} /></Field>
-    <Field label="Loại"><select value={form.loaiChuongTrinh} onChange={(e) => setForm({...form, loaiChuongTrinh: e.target.value})} style={inp}>{LOAI_OPTIONS.map((l) => <option key={l} value={l}>{l}</option>)}</select></Field>
+    <Field label="Loại"><select value={form.loaiChuongTrinh} onChange={(e) => setForm({...form, loaiChuongTrinh: e.target.value})} style={inp}>{LOAI_OPTIONS.map((l) => <option key={l} value={l}>{LOAI_LABELS[l] ?? l}</option>)}</select></Field>
     <Field label="Thời lượng (giờ)"><input type="number" value={form.thoiLuongGio} onChange={(e) => setForm({...form, thoiLuongGio: Number(e.target.value)})} style={inp} /></Field>
-    <Field label="Điểm đậu tối thiểu"><input type="number" value={form.diemDanhGiaToiThieu} onChange={(e) => setForm({...form, diemDanhGiaToiThieu: Number(e.target.value)})} style={inp} /></Field>
-    <Field label="Chứng chỉ cấp"><input value={form.chungChi} onChange={(e) => setForm({...form, chungChi: e.target.value})} style={inp} /></Field>
+    <Field label="Điểm đạt tối thiểu"><input type="number" value={form.diemDanhGiaToiThieu} onChange={(e) => setForm({...form, diemDanhGiaToiThieu: Number(e.target.value)})} style={inp} /></Field>
+    <Field label="Chứng chỉ được cấp"><input value={form.chungChi} onChange={(e) => setForm({...form, chungChi: e.target.value})} style={inp} /></Field>
     <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
       <button onClick={() => onSubmit(form)} style={btnPrimary}>Lưu</button>
       <button onClick={onCancel} style={{ ...btn, background: "#94a3b8" }}>Hủy</button>
@@ -251,10 +268,10 @@ function LopForm({ chuongTrinh, onSubmit, onCancel }: any) {
     ngayKetThuc: new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10),
     soBuoi: 5, soChoToiDa: 30, diaDiem: "", giangVien: "",
   });
-  return <Modal onClose={onCancel} title="Tạo lớp học">
+  return <Modal onClose={onCancel} title="Tạo lớp đào tạo">
     <Field label="Mã lớp"><input value={form.maLop} onChange={(e) => setForm({...form, maLop: e.target.value})} style={inp} /></Field>
     <Field label="Tên lớp"><input value={form.tenLop} onChange={(e) => setForm({...form, tenLop: e.target.value})} style={inp} /></Field>
-    <Field label="Chương trình"><select value={form.chuongTrinhId} onChange={(e) => setForm({...form, chuongTrinhId: e.target.value})} style={inp}>{chuongTrinh.map((c: any) => <option key={c.id} value={c.id}>{c.tenChuongTrinh}</option>)}</select></Field>
+    <Field label="Chương trình đào tạo"><select value={form.chuongTrinhId} onChange={(e) => setForm({...form, chuongTrinhId: e.target.value})} style={inp}>{chuongTrinh.map((c: any) => <option key={c.id} value={c.id}>{c.tenChuongTrinh}</option>)}</select></Field>
     <Field label="Ngày bắt đầu"><input type="date" value={form.ngayBatDau} onChange={(e) => setForm({...form, ngayBatDau: e.target.value})} style={inp} /></Field>
     <Field label="Ngày kết thúc"><input type="date" value={form.ngayKetThuc} onChange={(e) => setForm({...form, ngayKetThuc: e.target.value})} style={inp} /></Field>
     <Field label="Số buổi"><input type="number" value={form.soBuoi} onChange={(e) => setForm({...form, soBuoi: Number(e.target.value)})} style={inp} /></Field>
@@ -270,9 +287,9 @@ function LopForm({ chuongTrinh, onSubmit, onCancel }: any) {
 
 function DangKyForm({ lopHoc, onSubmit, onCancel }: any) {
   const [form, setForm] = useState({ lopHocId: lopHoc[0]?.id, nhanVienId: "nv-1", lyDoDangKy: "" });
-  return <Modal onClose={onCancel} title="Đăng ký lớp học">
-    <Field label="Lớp học"><select value={form.lopHocId} onChange={(e) => setForm({...form, lopHocId: e.target.value})} style={inp}>{lopHoc.map((l: any) => <option key={l.id} value={l.id}>{l.tenLop} ({l.maLop})</option>)}</select></Field>
-    <Field label="Mã NV"><input value={form.nhanVienId} onChange={(e) => setForm({...form, nhanVienId: e.target.value})} style={inp} /></Field>
+  return <Modal onClose={onCancel} title="Đăng ký lớp đào tạo">
+    <Field label="Lớp đào tạo"><select value={form.lopHocId} onChange={(e) => setForm({...form, lopHocId: e.target.value})} style={inp}>{lopHoc.map((l: any) => <option key={l.id} value={l.id}>{l.tenLop} ({l.maLop})</option>)}</select></Field>
+    <Field label="Mã nhân viên"><input value={form.nhanVienId} onChange={(e) => setForm({...form, nhanVienId: e.target.value})} style={inp} /></Field>
     <Field label="Lý do đăng ký"><textarea value={form.lyDoDangKy} onChange={(e) => setForm({...form, lyDoDangKy: e.target.value})} style={{...inp, height: 60}} /></Field>
     <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
       <button onClick={() => onSubmit(form)} style={btnPrimary}>Đăng ký</button>
@@ -283,7 +300,7 @@ function DangKyForm({ lopHoc, onSubmit, onCancel }: any) {
 
 function DanhGiaForm({ dangKyId, onSubmit, onCancel }: any) {
   const [form, setForm] = useState({ diemNoiDung: 80, diemGiangVien: 80, diemThucHanh: 80, yKienNguoiHoc: "" });
-  return <Modal onClose={onCancel} title={`Đánh giá - ĐK ${dangKyId?.slice(0, 8)}`}>
+  return <Modal onClose={onCancel} title={`Đánh giá đăng ký ${dangKyId?.slice(0, 8)}`}>
     <p style={{ color: "#64748b", fontSize: 13 }}>Điểm 0-100, trọng số: 40% nội dung + 30% giảng viên + 30% thực hành.</p>
     <Field label="Điểm nội dung"><input type="number" min={0} max={100} value={form.diemNoiDung} onChange={(e) => setForm({...form, diemNoiDung: Number(e.target.value)})} style={inp} /></Field>
     <Field label="Điểm giảng viên"><input type="number" min={0} max={100} value={form.diemGiangVien} onChange={(e) => setForm({...form, diemGiangVien: Number(e.target.value)})} style={inp} /></Field>
