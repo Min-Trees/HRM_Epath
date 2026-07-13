@@ -1,0 +1,570 @@
+/* ============================================================
+   HRM_Epath — Global Stylesheet
+   Mục đích: bổ sung utility classes cho spacing / shadow /
+   typography / hover / focus / responsive, không phá vỡ
+   inline style hiện tại. Tất cả class dùng prefix `hr-`
+   để tránh xung đột với global reset.
+   ============================================================ */
+
+/* ---------- Font chữ hệ thống ---------- */
+:root {
+  --hr-font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --hr-font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --hr-font-mono: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+
+  /* Bộ màu thương hiệu */
+  --hr-brand-blue: #0080FF;
+  --hr-brand-purple: #8B00FF;
+  --hr-brand-green: #22C55E;
+  --hr-brand-white: #FFFFFF;
+
+  /* Màu neutral phụ (bổ sung, KHÔNG thay thế brand) */
+  --hr-neutral-50: #F8FAFC;
+  --hr-neutral-100: #F1F5F9;
+  --hr-neutral-200: #E2E8F0;
+  --hr-neutral-300: #CBD5E1;
+  --hr-neutral-400: #94A3B8;
+  --hr-neutral-500: #64748B;
+  --hr-neutral-600: #475569;
+  --hr-neutral-700: #334155;
+  --hr-neutral-800: #1E293B;
+  --hr-neutral-900: #0F172A;
+
+  /* Shadows (tăng chiều sâu) */
+  --hr-shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --hr-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --hr-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
+  --hr-shadow-lg: 0 12px 24px rgba(0, 128, 255, 0.10), 0 4px 8px rgba(15, 23, 42, 0.06);
+  --hr-shadow-focus-blue: 0 0 0 3px rgba(0, 128, 255, 0.20);
+  --hr-shadow-focus-purple: 0 0 0 3px rgba(139, 0, 255, 0.20);
+
+  /* Radii */
+  --hr-radius-xs: 4px;
+  --hr-radius-sm: 6px;
+  --hr-radius-md: 10px;
+  --hr-radius-lg: 14px;
+  --hr-radius-xl: 20px;
+
+  /* Spacing scale (4-based) */
+  --hr-space-1: 4px;
+  --hr-space-2: 8px;
+  --hr-space-3: 12px;
+  --hr-space-4: 16px;
+  --hr-space-5: 20px;
+  --hr-space-6: 24px;
+  --hr-space-8: 32px;
+  --hr-space-10: 40px;
+}
+
+/* ---------- Reset nhẹ cho toàn cục ---------- */
+html, body {
+  font-family: var(--hr-font-sans);
+  color: var(--hr-neutral-900);
+  background: var(--hr-neutral-50);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Typographic hierarchy */
+.hr-display {
+  font-family: var(--hr-font-display);
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+.hr-mono {
+  font-family: var(--hr-font-mono);
+}
+
+/* ============================================================
+   SPACING UTILITIES  (4px scale)
+   Các class bổ sung; KHÔNG thay thế inline style.
+   ============================================================ */
+.hr-p-2 { padding: var(--hr-space-2); }
+.hr-p-3 { padding: var(--hr-space-3); }
+.hr-p-4 { padding: var(--hr-space-4); }
+.hr-p-5 { padding: var(--hr-space-5); }
+.hr-p-6 { padding: var(--hr-space-6); }
+
+.hr-px-3 { padding-left: var(--hr-space-3); padding-right: var(--hr-space-3); }
+.hr-px-4 { padding-left: var(--hr-space-4); padding-right: var(--hr-space-4); }
+.hr-px-5 { padding-left: var(--hr-space-5); padding-right: var(--hr-space-5); }
+.hr-px-6 { padding-left: var(--hr-space-6); padding-right: var(--hr-space-6); }
+
+.hr-py-2 { padding-top: var(--hr-space-2); padding-bottom: var(--hr-space-2); }
+.hr-py-3 { padding-top: var(--hr-space-3); padding-bottom: var(--hr-space-3); }
+.hr-py-4 { padding-top: var(--hr-space-4); padding-bottom: var(--hr-space-4); }
+.hr-py-5 { padding-top: var(--hr-space-5); padding-bottom: var(--hr-space-5); }
+.hr-py-6 { padding-top: var(--hr-space-6); padding-bottom: var(--hr-space-6); }
+
+.hr-mb-2 { margin-bottom: var(--hr-space-2); }
+.hr-mb-3 { margin-bottom: var(--hr-space-3); }
+.hr-mb-4 { margin-bottom: var(--hr-space-4); }
+.hr-mb-5 { margin-bottom: var(--hr-space-5); }
+.hr-mb-6 { margin-bottom: var(--hr-space-6); }
+.hr-mb-8 { margin-bottom: var(--hr-space-8); }
+
+.hr-mt-2 { margin-top: var(--hr-space-2); }
+.hr-mt-3 { margin-top: var(--hr-space-3); }
+.hr-mt-4 { margin-top: var(--hr-space-4); }
+.hr-mt-5 { margin-top: var(--hr-space-5); }
+.hr-mt-6 { margin-top: var(--hr-space-6); }
+.hr-mt-8 { margin-top: var(--hr-space-8); }
+
+.hr-gap-1 { gap: var(--hr-space-1); }
+.hr-gap-2 { gap: var(--hr-space-2); }
+.hr-gap-3 { gap: var(--hr-space-3); }
+.hr-gap-4 { gap: var(--hr-space-4); }
+.hr-gap-5 { gap: var(--hr-space-5); }
+.hr-gap-6 { gap: var(--hr-space-6); }
+
+.hr-space-y-3 > * + * { margin-top: var(--hr-space-3); }
+.hr-space-y-4 > * + * { margin-top: var(--hr-space-4); }
+.hr-space-y-5 > * + * { margin-top: var(--hr-space-5); }
+.hr-space-y-6 > * + * { margin-top: var(--hr-space-6); }
+
+.hr-flex { display: flex; }
+.hr-flex-col { display: flex; flex-direction: column; }
+.hr-flex-1 { flex: 1; }
+.hr-items-center { align-items: center; }
+.hr-justify-between { justify-content: space-between; }
+.hr-flex-wrap { flex-wrap: wrap; }
+
+/* ============================================================
+   SURFACES / CARDS / BUTTONS — shadows, radii, transitions
+   ============================================================ */
+.hr-surface {
+  background: #fff;
+  border-radius: var(--hr-radius-md);
+  box-shadow: var(--hr-shadow-sm);
+  border: 1px solid var(--hr-neutral-200);
+}
+.hr-surface-md {
+  box-shadow: var(--hr-shadow-md);
+}
+.hr-surface-lg {
+  box-shadow: var(--hr-shadow-lg);
+}
+
+.hr-card {
+  background: #fff;
+  border-radius: var(--hr-radius-lg);
+  box-shadow: var(--hr-shadow-sm);
+  border: 1px solid var(--hr-neutral-200);
+  overflow: hidden;
+  transition: box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease;
+}
+.hr-card:hover {
+  box-shadow: var(--hr-shadow-md);
+  border-color: var(--hr-neutral-300);
+}
+
+.hr-card-interactive {
+  cursor: pointer;
+}
+.hr-card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--hr-shadow-md);
+  border-color: var(--hr-brand-blue);
+}
+
+.hr-section {
+  background: #fff;
+  border: 1px solid var(--hr-neutral-200);
+  border-radius: var(--hr-radius-lg);
+  padding: var(--hr-space-6);
+  margin-bottom: var(--hr-space-5);
+  box-shadow: var(--hr-shadow-sm);
+}
+
+/* Buttons — dùng class bổ sung, KHÔNG thay thế inline style */
+.hr-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.25;
+  border-radius: var(--hr-radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease,
+              box-shadow 140ms ease, transform 80ms ease, color 140ms ease;
+  white-space: nowrap;
+  user-select: none;
+}
+.hr-btn:active {
+  transform: translateY(1px);
+}
+.hr-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--hr-shadow-focus-blue);
+}
+.hr-btn-primary {
+  background: var(--hr-brand-blue);
+  color: #fff;
+}
+.hr-btn-primary:hover {
+  background: #0066CC;
+  box-shadow: 0 4px 12px rgba(0, 128, 255, 0.25);
+}
+.hr-btn-purple {
+  background: var(--hr-brand-purple);
+  color: #fff;
+}
+.hr-btn-purple:hover {
+  background: #6E00CC;
+  box-shadow: 0 4px 12px rgba(139, 0, 255, 0.25);
+}
+.hr-btn-success {
+  background: var(--hr-brand-green);
+  color: #fff;
+}
+.hr-btn-success:hover {
+  background: #16A34A;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
+}
+.hr-btn-ghost {
+  background: var(--hr-neutral-100);
+  color: var(--hr-neutral-700);
+}
+.hr-btn-ghost:hover {
+  background: var(--hr-neutral-200);
+}
+.hr-btn-danger {
+  background: #FEE2E2;
+  color: #991B1B;
+  border-color: #FCA5A5;
+}
+.hr-btn-danger:hover {
+  background: #FECACA;
+}
+
+.hr-btn-sm { padding: 4px 10px; font-size: 12px; }
+.hr-btn-lg { padding: 10px 20px; font-size: 15px; }
+
+/* ============================================================
+   INPUTS — không đổi inline style, bổ sung focus state rõ ràng
+   ============================================================ */
+.hr-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--hr-neutral-300);
+  border-radius: var(--hr-radius-sm);
+  font-size: 14px;
+  font-family: inherit;
+  background: #fff;
+  color: var(--hr-neutral-900);
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+.hr-input:focus {
+  outline: none;
+  border-color: var(--hr-brand-blue);
+  box-shadow: var(--hr-shadow-focus-blue);
+}
+.hr-input::placeholder {
+  color: var(--hr-neutral-400);
+}
+
+.hr-label {
+  display: block;
+  font-size: 13px;
+  color: var(--hr-neutral-500);
+  margin-bottom: var(--hr-space-1);
+  font-weight: 500;
+}
+
+/* ============================================================
+   STATUS CHIPS — dùng màu thương hiệu + neutral phụ
+   ============================================================ */
+.hr-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.hr-chip-blue   { background: rgba(0, 128, 255, 0.10);  color: var(--hr-brand-blue); }
+.hr-chip-purple { background: rgba(139, 0, 255, 0.10);  color: var(--hr-brand-purple); }
+.hr-chip-green  { background: rgba(34, 197, 94, 0.12);  color: var(--hr-brand-green); }
+.hr-chip-amber  { background: rgba(245, 158, 11, 0.14); color: #92400E; }
+.hr-chip-red    { background: rgba(239, 68, 68, 0.12);  color: #991B1B; }
+.hr-chip-gray   { background: var(--hr-neutral-100);    color: var(--hr-neutral-700); }
+
+/* ============================================================
+   TABLES — hàng đều, header sticky, hover row
+   ============================================================ */
+.hr-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14px;
+  background: #fff;
+  border-radius: var(--hr-radius-md);
+  overflow: hidden;
+  box-shadow: var(--hr-shadow-sm);
+}
+.hr-table thead th {
+  background: var(--hr-neutral-50);
+  color: var(--hr-neutral-600);
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--hr-neutral-200);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.hr-table tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--hr-neutral-100);
+  color: var(--hr-neutral-800);
+}
+.hr-table tbody tr {
+  transition: background 120ms ease;
+}
+.hr-table tbody tr:hover {
+  background: var(--hr-neutral-50);
+}
+.hr-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ============================================================
+   CARDS MODULE (KPI / dashboard grid cards)
+   ============================================================ */
+.hr-kpi-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px 24px;
+  background: #fff;
+  border: 1px solid var(--hr-neutral-200);
+  border-radius: var(--hr-radius-lg);
+  box-shadow: var(--hr-shadow-sm);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.hr-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--hr-shadow-md);
+}
+.hr-kpi-label {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--hr-neutral-500);
+  font-weight: 600;
+}
+.hr-kpi-value {
+  font-family: var(--hr-font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--hr-neutral-900);
+  line-height: 1.1;
+}
+.hr-kpi-hint {
+  font-size: 12px;
+  color: var(--hr-neutral-500);
+}
+
+/* ============================================================
+   PAGE LAYOUT — header + section spacing
+   ============================================================ */
+.hr-page {
+  padding: 0;
+  min-height: 100vh;
+  background: var(--hr-neutral-50);
+}
+.hr-page-body {
+  padding: 24px 32px 40px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.hr-section-title {
+  font-family: var(--hr-font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--hr-neutral-900);
+  margin: 0 0 var(--hr-space-4) 0;
+  letter-spacing: -0.01em;
+}
+
+.hr-subtitle {
+  color: var(--hr-neutral-500);
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+/* ============================================================
+   DIALOG / MODAL (chỉ class, không thay thế inline)
+   ============================================================ */
+.hr-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: hr-fade-in 140ms ease both;
+}
+.hr-modal {
+  background: #fff;
+  border-radius: var(--hr-radius-lg);
+  padding: 24px;
+  width: 480px;
+  max-width: calc(100vw - 32px);
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.30);
+  animation: hr-pop-in 160ms ease both;
+}
+.hr-modal-title {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--hr-neutral-900);
+}
+
+@keyframes hr-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes hr-pop-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ============================================================
+   TABS / SEGMENTED CONTROLS
+   ============================================================ */
+.hr-tab-bar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.hr-tab {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--hr-radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  background: var(--hr-neutral-100);
+  color: var(--hr-neutral-700);
+  transition: background 140ms ease, color 140ms ease, transform 80ms ease;
+}
+.hr-tab:hover {
+  background: var(--hr-neutral-200);
+}
+.hr-tab:active {
+  transform: translateY(1px);
+}
+.hr-tab-active {
+  background: var(--hr-brand-blue);
+  color: #fff;
+}
+.hr-tab-active:hover {
+  background: #0066CC;
+}
+
+/* ============================================================
+   PROGRESS / BARS
+   ============================================================ */
+.hr-progress-track {
+  width: 100%;
+  height: 8px;
+  background: var(--hr-neutral-200);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.hr-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--hr-brand-blue), var(--hr-brand-purple));
+  transition: width 240ms ease;
+}
+.hr-progress-fill--green {
+  background: linear-gradient(90deg, var(--hr-brand-green), #16A34A);
+}
+
+/* ============================================================
+   PAGE HEADER (kế thừa chức năng component sẵn có)
+   ============================================================ */
+.hr-page-header {
+  background: #fff;
+  border-bottom: 1px solid var(--hr-neutral-200);
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.hr-page-header h2 {
+  margin: 0;
+  font-family: var(--hr-font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--hr-neutral-900);
+  letter-spacing: -0.01em;
+}
+
+/* ============================================================
+   RESPONSIVE — mobile/tablet
+   ============================================================ */
+@media (max-width: 900px) {
+  .hr-page-body {
+    padding: 16px 16px 32px;
+  }
+  .hr-page-header {
+    padding: 16px;
+  }
+  .hr-modal {
+    width: calc(100vw - 24px);
+  }
+}
+
+@media (max-width: 640px) {
+  .hr-kpi-value {
+    font-size: 22px;
+  }
+  .hr-page-header h2 {
+    font-size: 18px;
+  }
+  .hr-table thead th,
+  .hr-table tbody td {
+    padding: 10px 12px;
+  }
+}
+
+/* Scrollbar tinh tế cho danh sách dài */
+.hr-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.hr-scroll::-webkit-scrollbar-thumb {
+  background: var(--hr-neutral-300);
+  border-radius: 999px;
+}
+.hr-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--hr-neutral-400);
+}
+
+/* Focus keyboard rõ cho các nav-item dạng button */
+button:focus-visible, [role="button"]:focus-visible {
+  outline: none;
+  box-shadow: var(--hr-shadow-focus-blue);
+}

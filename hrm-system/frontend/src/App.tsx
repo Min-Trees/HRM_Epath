@@ -168,7 +168,7 @@ function AppLayout() {
         </button>
       </aside>
 
-      <main style={{ flex: 1, overflow: "auto", minWidth: 0 }}>
+      <main className="hr-scroll" style={{ flex: 1, overflow: "auto", minWidth: 0 }}>
         <Outlet />
       </main>
     </div>

@@ -158,28 +158,28 @@ export default function DepartmentPage() {
   return (
     <div>
       <PageHeader title="Cơ cấu tổ chức" subtitle="T04 — Phòng ban & Ngạch bậc lương" />
-      <div style={{ padding: "16px 24px" }}>
+      <div className="hr-page-body">
         {msg && <div style={{ padding: "8px 16px", background: msg.type === "ok" ? "#dcfce7" : "#fee2e2", color: msg.type === "ok" ? "#166534" : "#991b1b", borderRadius: 6, marginBottom: 12 }}>{msg.text}</div>}
 
-        <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-          <button onClick={() => setTab("dept")} style={{ padding: "8px 16px", background: tab === "dept" ? "#3b82f6" : "#e2e8f0", color: tab === "dept" ? "#fff" : "#334", border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 600 }}>Phòng ban</button>
-          <button onClick={() => setTab("grade")} style={{ padding: "8px 16px", background: tab === "grade" ? "#10b981" : "#e2e8f0", color: tab === "grade" ? "#fff" : "#334", border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 600 }}>Ngạch bậc lương</button>
+        <div className="hr-tab-bar">
+          <button className={`hr-tab ${tab === "dept" ? "hr-tab-active" : ""}`} onClick={() => setTab("dept")}>Phòng ban</button>
+          <button className={`hr-tab ${tab === "grade" ? "hr-tab-active" : ""}`} onClick={() => setTab("grade")} style={{ background: tab === "grade" ? "#10b981" : undefined }}>Ngạch bậc lương</button>
         </div>
 
         {tab === "dept" && (
           <div>
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
-              <button onClick={() => { setEditDept(null); setDeptForm({ maPhongBan: "", tenPhongBan: "", phongBanChaId: "", dinhBien: 0 }); setShowDeptForm(true); }} style={{ padding: "8px 16px", background: "#3b82f6", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", fontSize: 14 }}>+ Thêm phòng ban</button>
+              <button className="hr-btn hr-btn-primary" onClick={() => { setEditDept(null); setDeptForm({ maPhongBan: "", tenPhongBan: "", phongBanChaId: "", dinhBien: 0 }); setShowDeptForm(true); }}>+ Thêm phòng ban</button>
             </div>
             {loading ? <div style={{ padding: 24, color: "#64748b" }}>Đang tải...</div> : (
-              <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", borderRadius: 8, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}>
-                <thead><tr style={{ background: "#f8fafc" }}>
-                  <th style={{ padding: "10px 16px", textAlign: "left", fontSize: 13 }}>Mã PB</th>
-                  <th style={{ padding: "10px 8px", textAlign: "left", fontSize: 13 }}>Tên phòng ban</th>
-                  <th style={{ padding: "10px 8px", textAlign: "center", fontSize: 13 }}>Cấp độ</th>
-                  <th style={{ padding: "10px 8px", textAlign: "center", fontSize: 13 }}>Định biên</th>
-                  <th style={{ padding: "10px 8px", textAlign: "center", fontSize: 13 }}>Trạng thái</th>
-                  <th style={{ padding: "10px 8px", textAlign: "left", fontSize: 13 }}>Hành động</th>
+              <table className="hr-table">
+                <thead><tr>
+                  <th>Mã PB</th>
+                  <th>Tên phòng ban</th>
+                  <th style={{ textAlign: "center" }}>Cấp độ</th>
+                  <th style={{ textAlign: "center" }}>Định biên</th>
+                  <th style={{ textAlign: "center" }}>Trạng thái</th>
+                  <th>Hành động</th>
                 </tr></thead>
                 <tbody>
                   {depts.map(d => <DeptRow key={d.phongBanId} dept={d} onEdit={openEditDept} onClose={handleCloseDept} />)}
