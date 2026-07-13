@@ -1,12 +1,12 @@
-// T06: Contract management page
+// T06: Trang quản lý hợp đồng lao động
 import { useState, useEffect } from "react";
 import { PageHeader } from "../components/SharedComponents";
 import { contractApi } from "../api";
 import { employeeApi } from "../api";
 
 const LOAI_HD: Record<string, string> = {
-  THU_VIEC: "Thu viec", XAC_DINH_THOI_HAN: "Xac dinh thoi han",
-  KHONG_XAC_DINH_THOI_HAN: "Khong xac dinh thoi han", PHU_LUC: "Phu luc",
+  THU_VIEC: "Thử việc", XAC_DINH_THOI_HAN: "Xác định thời hạn",
+  KHONG_XAC_DINH_THOI_HAN: "Không xác định thời hạn", PHU_LUC: "Phụ lục",
 };
 
 const TT_HD: Record<string, { bg: string; color: string }> = {
@@ -18,7 +18,7 @@ const TT_HD: Record<string, { bg: string; color: string }> = {
 
 function StatusChip({ status }: { status: string }) {
   const s = TT_HD[status] || { bg: "#f3f4f6", color: "#6b7280" };
-  const label: Record<string, string> = { HIEU_LUC: "Hieu luc", HET_HIEU_LUC: "Het hieu luc", DA_THANH_LY: "Da thanh ly", HUY: "Huy" };
+  const label: Record<string, string> = { HIEU_LUC: "Hiệu lực", HET_HIEU_LUC: "Hết hiệu lực", DA_THANH_LY: "Đã thanh lý", HUY: "Huỷ" };
   return <span style={{ background: s.bg, color: s.color, padding: "2px 8px", borderRadius: 12, fontSize: 12 }}>{label[status] || status}</span>;
 }
 
@@ -74,7 +74,7 @@ export default function ContractPage() {
       await contractApi.create(selectedNv, form);
       setShowCreate(false);
       selectEmployee(selectedNv);
-      showMsg("ok", "Tao hop dong thanh cong");
+      showMsg("ok", "Tạo hợp đồng thành công");
     } catch (e: any) { showMsg("err", e.message); }
   }
 
@@ -85,7 +85,7 @@ export default function ContractPage() {
       setShowAddendum(null);
       setAddForm({ ngayHieuLuc: "", ngayHetHieuLuc: "" });
       selectEmployee(selectedNv);
-      showMsg("ok", "Tao phu luc thanh cong");
+      showMsg("ok", "Tạo phụ lục thành công");
     } catch (e: any) { showMsg("err", e.message); }
   }
 
@@ -95,23 +95,22 @@ export default function ContractPage() {
 
   return (
     <div>
-      <PageHeader title="Hop dong lao dong" subtitle="T06 — Quan ly hop dong, phu luc, canh bao het han" />
+      <PageHeader title="Hợp đồng lao động" subtitle="T06 — Quản lý hợp đồng, phụ lục, cảnh báo hết hạn" />
       <div style={{ padding: "16px 24px" }}>
         {msg && <div style={{ padding: "8px 16px", background: msg.type === "ok" ? "#dcfce7" : "#fee2e2", color: msg.type === "ok" ? "#166534" : "#991b1b", borderRadius: 6, marginBottom: 12 }}>{msg.text}</div>}
 
         <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-          <button onClick={() => setTab("list")} style={{ padding: "8px 16px", background: tab === "list" ? "#3b82f6" : "#e2e8f0", color: tab === "list" ? "#fff" : "#334", border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 600 }}>Danh sach HD</button>
+          <button onClick={() => setTab("list")} style={{ padding: "8px 16px", background: tab === "list" ? "#3b82f6" : "#e2e8f0", color: tab === "list" ? "#fff" : "#334", border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 600 }}>Danh sách HĐ</button>
           <button onClick={() => setTab("expiring")} style={{ padding: "8px 16px", background: tab === "expiring" ? "#f59e0b" : "#e2e8f0", color: tab === "expiring" ? "#fff" : "#334", border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 600 }}>
-            Sap het han ({expiring.length})
+            Sắp hết hạn ({expiring.length})
           </button>
         </div>
 
         {tab === "list" && (
           <div style={{ display: "flex", gap: 16 }}>
-            {/* Employee selector */}
             <div style={{ flex: "0 0 280px" }}>
               <select value={selectedNv} onChange={e => selectEmployee(e.target.value)} style={{ ...inputStyle, marginBottom: 12, width: "100%" }}>
-                <option value="">Chon nhan vien...</option>
+                <option value="">Chọn nhân viên...</option>
                 {employees.map(emp => <option key={emp.nhanVienId} value={emp.nhanVienId}>{emp.maNv} — {emp.hoTen}</option>)}
               </select>
               {selectedEmp && (
@@ -119,15 +118,14 @@ export default function ContractPage() {
                   <div style={{ fontWeight: 700, fontSize: 15 }}>{selectedEmp.hoTen}</div>
                   <div style={{ fontSize: 13, color: "#64748b", marginTop: 4 }}>{selectedEmp.maNv} — {selectedEmp.phongBan}</div>
                   <div style={{ fontSize: 13, color: "#64748b" }}>{selectedEmp.email}</div>
-                  <button onClick={() => { setShowCreate(true); setForm({ soHopDong: "", loaiHopDong: "XAC_DINH_THOI_HAN", ngayHieuLuc: "", ngayHetHieuLuc: "", mucLuongThoaThuan: 0, phuCapCoDinh: {} }); }} style={{ marginTop: 12, padding: "8px 12px", background: "#3b82f6", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", fontSize: 13, width: "100%" }}>+ Tao hop dong</button>
+                  <button onClick={() => { setShowCreate(true); setForm({ soHopDong: "", loaiHopDong: "XAC_DINH_THOI_HAN", ngayHieuLuc: "", ngayHetHieuLuc: "", mucLuongThoaThuan: 0, phuCapCoDinh: {} }); }} style={{ marginTop: 12, padding: "8px 12px", background: "#3b82f6", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", fontSize: 13, width: "100%" }}>+ Tạo hợp đồng</button>
                 </div>
               )}
             </div>
 
-            {/* Contract list */}
             <div style={{ flex: 1 }}>
-              {!selectedNv && <div style={{ padding: 32, textAlign: "center", color: "#94a3b8", background: "#fff", borderRadius: 8 }}>Chon nhan vien de xem hop dong</div>}
-              {selectedNv && empContracts.length === 0 && <div style={{ padding: 32, textAlign: "center", color: "#94a3b8", background: "#fff", borderRadius: 8 }}>Chua co hop dong</div>}
+              {!selectedNv && <div style={{ padding: 32, textAlign: "center", color: "#94a3b8", background: "#fff", borderRadius: 8 }}>Chọn nhân viên để xem hợp đồng</div>}
+              {selectedNv && empContracts.length === 0 && <div style={{ padding: 32, textAlign: "center", color: "#94a3b8", background: "#fff", borderRadius: 8 }}>Chưa có hợp đồng</div>}
               {empContracts.length > 0 && (
                 <div style={{ background: "#fff", borderRadius: 8, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}>
                   {empContracts.map((c, i) => (
@@ -136,14 +134,14 @@ export default function ContractPage() {
                         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
                           <span style={{ fontFamily: "monospace", fontWeight: 700 }}>{c.soHopDong}</span>
                           <span style={{ fontSize: 13, color: "#64748b" }}>{LOAI_HD[c.loaiHopDong] || c.loaiHopDong}</span>
-                          {c.hopDongGocId && <span style={{ fontSize: 11, background: "#fef3c7", color: "#92400e", padding: "1px 6px", borderRadius: 4 }}>Phu luc</span>}
+                          {c.hopDongGocId && <span style={{ fontSize: 11, background: "#fef3c7", color: "#92400e", padding: "1px 6px", borderRadius: 4 }}>Phụ lục</span>}
                         </div>
                         <StatusChip status={c.trangThai} />
                       </div>
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, fontSize: 13, color: "#475569" }}>
-                        <div>Hieu luc: <strong>{c.ngayHieuLuc}</strong></div>
-                        <div>Het: <strong>{c.ngayHetHieuLuc || "Khong co"}</strong></div>
-                        <div>Luong: <strong style={{ color: "#166534" }}>{fmtVND(c.mucLuongThoaThuan)}</strong></div>
+                        <div>Hiệu lực: <strong>{c.ngayHieuLuc}</strong></div>
+                        <div>Hết: <strong>{c.ngayHetHieuLuc || "Không có"}</strong></div>
+                        <div>Lương: <strong style={{ color: "#166534" }}>{fmtVND(c.mucLuongThoaThuan)}</strong></div>
                       </div>
                       {c.phuCapCoDinh && Object.keys(c.phuCapCoDinh).length > 0 && (
                         <div style={{ marginTop: 8, display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -153,7 +151,7 @@ export default function ContractPage() {
                         </div>
                       )}
                       {c.trangThai === "HIEU_LUC" && (
-                        <button onClick={() => setShowAddendum(c.id)} style={{ marginTop: 8, padding: "4px 10px", background: "#fef3c7", color: "#92400e", border: "1px solid #fde68a", borderRadius: 4, cursor: "pointer", fontSize: 12 }}>+ Tao phu luc</button>
+                        <button onClick={() => setShowAddendum(c.id)} style={{ marginTop: 8, padding: "4px 10px", background: "#fef3c7", color: "#92400e", border: "1px solid #fde68a", borderRadius: 4, cursor: "pointer", fontSize: 12 }}>+ Tạo phụ lục</button>
                       )}
                     </div>
                   ))}
@@ -165,16 +163,16 @@ export default function ContractPage() {
 
         {tab === "expiring" && (
           <div style={{ background: "#fff", borderRadius: 8, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}>
-            {expiring.length === 0 && <div style={{ padding: 32, textAlign: "center", color: "#94a3b8" }}>Khong co hop dong sap het han trong 90 ngay</div>}
+            {expiring.length === 0 && <div style={{ padding: 32, textAlign: "center", color: "#94a3b8" }}>Không có hợp đồng sắp hết hạn trong 90 ngày</div>}
             {expiring.map((c, i) => (
               <div key={c.id} style={{ padding: "14px 20px", borderBottom: i < expiring.length - 1 ? "1px solid #e2e8f0" : "none", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                   <div style={{ fontWeight: 600 }}>{c.hoTen} — <span style={{ fontFamily: "monospace" }}>{c.soHopDong}</span></div>
-                  <div style={{ fontSize: 13, color: "#64748b", marginTop: 2 }}>{LOAI_HD[c.loaiHopDong] || c.loaiHopDong} · Het: {c.ngayHetHieuLuc}</div>
+                  <div style={{ fontSize: 13, color: "#64748b", marginTop: 2 }}>{LOAI_HD[c.loaiHopDong] || c.loaiHopDong} · Hết: {c.ngayHetHieuLuc}</div>
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: c.soNgayConLai <= 30 ? "#991b1b" : "#d97706" }}>{c.soNgayConLai} ngay</div>
-                  <div style={{ fontSize: 12, color: "#64748b" }}>con lai</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: c.soNgayConLai <= 30 ? "#991b1b" : "#d97706" }}>{c.soNgayConLai} ngày</div>
+                  <div style={{ fontSize: 12, color: "#64748b" }}>còn lại</div>
                 </div>
               </div>
             ))}
@@ -185,32 +183,30 @@ export default function ContractPage() {
       {showCreate && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }} onClick={() => setShowCreate(false)}>
           <div style={cardStyle} onClick={e => e.stopPropagation()}>
-            <h3 style={{ margin: "0 0 16px" }}>Tao hop dong</h3>
-            <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>So hop dong *</label>
+            <h3 style={{ margin: "0 0 16px" }}>Tạo hợp đồng</h3>
+            <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>Số hợp đồng *</label>
             <input style={inputStyle} value={form.soHopDong} onChange={e => setForm(f => ({ ...f, soHopDong: e.target.value }))} placeholder="VD: HD-2026-001" />
-            <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>Loai hop dong</label>
+            <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>Loại hợp đồng</label>
             <select style={inputStyle} value={form.loaiHopDong} onChange={e => setForm(f => ({ ...f, loaiHopDong: e.target.value }))}>
-              <option value="XAC_DINH_THOI_HAN">Xac dinh thoi han</option>
-              <option value="KHONG_XAC_DINH_THOI_HAN">Khong xac dinh thoi han</option>
-              <option value="THU_VIEC">Thu viec</option>
+              <option value="XAC_DINH_THOI_HAN">Xác định thời hạn</option>
+              <option value="KHONG_XAC_DINH_THOI_HAN">Không xác định thời hạn</option>
+              <option value="THU_VIEC">Thử việc</option>
             </select>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 16px" }}>
               <div>
-                <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>Ngay hieu luc *</label>
+                <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>Ngày hiệu lực *</label>
                 <input style={inputStyle} type="date" value={form.ngayHieuLuc} onChange={e => setForm(f => ({ ...f, ngayHieuLuc: e.target.value }))} />
               </div>
-              {form.loaiHopDong !== "KHONG_XAC_DINH_THOI_HAN" && (
-                <div>
-                  <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>Ngay het hieu luc *</label>
-                  <input style={inputStyle} type="date" value={form.ngayHetHieuLuc} onChange={e => setForm(f => ({ ...f, ngayHetHieuLuc: e.target.value }))} />
-                </div>
-              )}
+              <div>
+                <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>Ngày hết hạn</label>
+                <input style={inputStyle} type="date" value={form.ngayHetHieuLuc} onChange={e => setForm(f => ({ ...f, ngayHetHieuLuc: e.target.value }))} />
+              </div>
             </div>
-            <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>Muc luong thoa thuan (VND)</label>
-            <input style={inputStyle} type="number" value={form.mucLuongThoaThuan} onChange={e => setForm(f => ({ ...f, mucLuongThoaThuan: parseInt(e.target.value) || 0 }))} />
+            <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>Mức lương thoả thuận (VND)</label>
+            <input style={inputStyle} type="number" value={form.mucLuongThoaThuan} onChange={e => setForm(f => ({ ...f, mucLuongThoaThuan: parseFloat(e.target.value) || 0 }))} />
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 8 }}>
-              <button onClick={() => setShowCreate(false)} style={{ padding: "8px 16px", background: "#e2e8f0", border: "none", borderRadius: 6, cursor: "pointer" }}>Huy</button>
-              <button onClick={handleCreate} style={{ padding: "8px 16px", background: "#3b82f6", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}>Tao</button>
+              <button onClick={() => setShowCreate(false)} style={{ padding: "8px 16px", background: "#e2e8f0", color: "#334", border: "none", borderRadius: 6, cursor: "pointer" }}>Huỷ</button>
+              <button onClick={handleCreate} style={{ padding: "8px 16px", background: "#3b82f6", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}>Lưu</button>
             </div>
           </div>
         </div>
@@ -219,14 +215,14 @@ export default function ContractPage() {
       {showAddendum && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }} onClick={() => setShowAddendum(null)}>
           <div style={cardStyle} onClick={e => e.stopPropagation()}>
-            <h3 style={{ margin: "0 0 16px" }}>Tao phu luc hop dong</h3>
-            <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>Ngay hieu luc *</label>
+            <h3 style={{ margin: "0 0 16px" }}>Tạo phụ lục hợp đồng</h3>
+            <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>Ngày hiệu lực</label>
             <input style={inputStyle} type="date" value={addForm.ngayHieuLuc} onChange={e => setAddForm(f => ({ ...f, ngayHieuLuc: e.target.value }))} />
-            <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>Ngay het hieu luc moi *</label>
+            <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>Ngày hết hạn mới</label>
             <input style={inputStyle} type="date" value={addForm.ngayHetHieuLuc} onChange={e => setAddForm(f => ({ ...f, ngayHetHieuLuc: e.target.value }))} />
-            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 8 }}>
-              <button onClick={() => setShowAddendum(null)} style={{ padding: "8px 16px", background: "#e2e8f0", border: "none", borderRadius: 6, cursor: "pointer" }}>Huy</button>
-              <button onClick={() => handleAddendum(showAddendum)} style={{ padding: "8px 16px", background: "#f59e0b", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}>Tao</button>
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+              <button onClick={() => setShowAddendum(null)} style={{ padding: "8px 16px", background: "#e2e8f0", color: "#334", border: "none", borderRadius: 6, cursor: "pointer" }}>Huỷ</button>
+              <button onClick={() => handleAddendum(showAddendum)} style={{ padding: "8px 16px", background: "#3b82f6", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}>Lưu</button>
             </div>
           </div>
         </div>
