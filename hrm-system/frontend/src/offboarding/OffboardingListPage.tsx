@@ -2,6 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { offboardingApi } from "../api";
 
+const TT_LABEL: Record<string, string> = {
+  MOI_TAO: "M?i t?o",
+  CHO_DUYET: "Ch? duy?t",
+  DANG_THUC_HIEN: "?ang th?c hi?n",
+  CHO_QUYET_TOAN: "Ch? quy?t toán",
+  HOAN_THANH: "Hoàn thành",
+  HUY: "Hu?",
+};
+
 export default function OffboardingListPage() {
   const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
@@ -117,7 +126,7 @@ function StatusChip({ status }: { status: string }) {
         fontSize: 12,
       }}
     >
-      {status}
+      {TT_LABEL[status] || status}
     </span>
   );
 }
