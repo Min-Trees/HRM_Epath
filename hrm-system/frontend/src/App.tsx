@@ -1,5 +1,5 @@
-import { HashRouter, Routes, Route, useLocation, useNavigate, useParams, Outlet } from "react-router-dom";
-import React, { useState, ReactNode, useEffect } from "react";
+import { HashRouter, Routes, Route, useLocation, useNavigate, Outlet } from "react-router-dom";
+import React, { useState } from "react";
 import DepartmentPage from "./department/DepartmentPage";
 import EmployeePage from "./employee/EmployeePage";
 import ContractPage from "./contract/ContractPage";
@@ -16,7 +16,7 @@ import PayrollRunPage from "./payroll/PayrollRunPage";
 import TrainingPage from "./training/TrainingPage";
 
 // ============================================================================
-// SHARED NAVIGATION ITEMS
+// DANH SÁCH ĐIỀU HƯỚNG
 // ============================================================================
 interface NavItem {
   path: string;
@@ -27,24 +27,24 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { path: "/", label: "Trang chu", task: "", color: "#64748b", icon: "🏠" },
-  { path: "/hr/departments", label: "Co cau to chuc", task: "T04", color: "#3b82f6", icon: "🏢" },
-  { path: "/hr/employees", label: "Nhan su", task: "T05", color: "#10b981", icon: "👤" },
-  { path: "/hr/contracts", label: "Hop dong", task: "T06", color: "#8b5cf6", icon: "📄" },
-  { path: "/attendance", label: "Cham cong", task: "T08+T09", color: "#06b6d4", icon: "🕐" },
-  { path: "/leave", label: "Nghi phep & OT", task: "T10", color: "#f59e0b", icon: "🏖" },
-  { path: "/system", label: "Quan tri he thong", task: "T11", color: "#64748b", icon: "⚙" },
-  { path: "/offboarding", label: "Ho so nghi viec", task: "T14", color: "#ef4444", icon: "📋" },
-  { path: "/bhxh/reports", label: "Bao cao BHXH", task: "T15", color: "#f59e0b", icon: "🏥" },
-  { path: "/tax/qtt", label: "Quyet toan thue TNCN", task: "T16", color: "#3b82f6", icon: "📊" },
-  { path: "/recruitment", label: "Tuyen dung", task: "T17", color: "#8b5cf6", icon: "👥" },
+  { path: "/", label: "Trang chủ", task: "", color: "#64748b", icon: "🏠" },
+  { path: "/hr/departments", label: "Cơ cấu tổ chức", task: "T04", color: "#3b82f6", icon: "🏢" },
+  { path: "/hr/employees", label: "Nhân sự", task: "T05", color: "#10b981", icon: "👤" },
+  { path: "/hr/contracts", label: "Hợp đồng", task: "T06", color: "#8b5cf6", icon: "📄" },
+  { path: "/attendance", label: "Chấm công", task: "T08+T09", color: "#06b6d4", icon: "🕐" },
+  { path: "/leave", label: "Nghỉ phép & OT", task: "T10", color: "#f59e0b", icon: "🏖" },
+  { path: "/system", label: "Quản trị hệ thống", task: "T11", color: "#64748b", icon: "⚙" },
+  { path: "/offboarding", label: "Hồ sơ nghỉ việc", task: "T14", color: "#ef4444", icon: "📋" },
+  { path: "/bhxh/reports", label: "Báo cáo BHXH", task: "T15", color: "#f59e0b", icon: "🏥" },
+  { path: "/tax/qtt", label: "Quyết toán thuế TNCN", task: "T16", color: "#3b82f6", icon: "📊" },
+  { path: "/recruitment", label: "Tuyển dụng", task: "T17", color: "#8b5cf6", icon: "👥" },
   { path: "/performance/kpi", label: "KPI / OKR", task: "T18", color: "#06b6d4", icon: "🎯" },
   { path: "/payroll/run", label: "Payroll Run", task: "T19", color: "#10b981", icon: "💰" },
-  { path: "/training", label: "Dao tao", task: "T20", color: "#ec4899", icon: "🎓" },
+  { path: "/training", label: "Đào tạo", task: "T20", color: "#ec4899", icon: "🎓" },
 ];
 
 // ============================================================================
-// APP LAYOUT — wraps every page with sidebar (uses <Outlet /> for content)
+// LAYOUT — bao bọc mọi trang bằng sidebar (sử dụng <Outlet /> cho nội dung)
 // ============================================================================
 function AppLayout() {
   const location = useLocation();
@@ -58,7 +58,6 @@ function AppLayout() {
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", background: "#f8fafc" }}>
-      {/* ── Sidebar ── */}
       <aside style={{
         width: sidebarCollapsed ? 64 : 240,
         background: "#1e293b",
@@ -72,7 +71,6 @@ function AppLayout() {
         height: "100vh",
         overflow: "hidden",
       }}>
-        {/* Logo */}
         <div style={{
           padding: sidebarCollapsed ? "16px 8px" : "16px 20px",
           borderBottom: "1px solid #334155",
@@ -90,7 +88,6 @@ function AppLayout() {
           )}
         </div>
 
-        {/* Nav items */}
         <nav style={{ flex: 1, overflowY: "auto", padding: "8px 0" }}>
           {NAV_ITEMS.map((item) => {
             const active = isActive(item.path);
@@ -153,7 +150,6 @@ function AppLayout() {
           })}
         </nav>
 
-        {/* Collapse toggle */}
         <button
           onClick={() => setSidebarCollapsed((c) => !c)}
           style={{
@@ -172,7 +168,6 @@ function AppLayout() {
         </button>
       </aside>
 
-      {/* ── Main content — <Outlet /> renders the matched child route ── */}
       <main style={{ flex: 1, overflow: "auto", minWidth: 0 }}>
         <Outlet />
       </main>
@@ -181,28 +176,27 @@ function AppLayout() {
 }
 
 // ============================================================================
-// DASHBOARD — full landing page
+// TRANG CHỦ — Bảng điều khiển tổng quan
 // ============================================================================
 function Dashboard() {
   const modules = [
-    { path: "#/hr/departments", label: "Co cau to chuc", task: "T04", color: "#3b82f6" },
-    { path: "#/hr/employees", label: "Ho so nhan vien", task: "T05", color: "#10b981" },
-    { path: "#/hr/contracts", label: "Hop dong lao dong", task: "T06", color: "#8b5cf6" },
-    { path: "#/attendance", label: "Cham cong & Ca lam viec", task: "T08+T09", color: "#06b6d4" },
-    { path: "#/leave", label: "Nghi phep & Tang ca", task: "T10", color: "#f59e0b" },
-    { path: "#/system", label: "Quan tri he thong", task: "T11", color: "#64748b" },
-    { path: "#/offboarding", label: "Ho so nghi viec", task: "T14", color: "#ef4444" },
-    { path: "#/bhxh/reports", label: "Bao cao BHXH D02/D03", task: "T15", color: "#f97316" },
-    { path: "#/tax/qtt", label: "Quyet toan thue TNCN", task: "T16", color: "#3b82f6" },
-    { path: "#/recruitment", label: "Tuyen dung", task: "T17", color: "#8b5cf6" },
-    { path: "#/performance/kpi", label: "Danh gia KPI/OKR", task: "T18", color: "#06b6d4" },
-    { path: "#/payroll/run", label: "Payroll Run - Ky linh luong", task: "T19", color: "#10b981" },
-    { path: "#/training", label: "Dao tao", task: "T20", color: "#ec4899" },
+    { path: "#/hr/departments", label: "Cơ cấu tổ chức", task: "T04", color: "#3b82f6" },
+    { path: "#/hr/employees", label: "Hồ sơ nhân viên", task: "T05", color: "#10b981" },
+    { path: "#/hr/contracts", label: "Hợp đồng lao động", task: "T06", color: "#8b5cf6" },
+    { path: "#/attendance", label: "Chấm công & Ca làm việc", task: "T08+T09", color: "#06b6d4" },
+    { path: "#/leave", label: "Nghỉ phép & Tăng ca", task: "T10", color: "#f59e0b" },
+    { path: "#/system", label: "Quản trị hệ thống", task: "T11", color: "#64748b" },
+    { path: "#/offboarding", label: "Hồ sơ nghỉ việc", task: "T14", color: "#ef4444" },
+    { path: "#/bhxh/reports", label: "Báo cáo BHXH D02/D03", task: "T15", color: "#f97316" },
+    { path: "#/tax/qtt", label: "Quyết toán thuế TNCN", task: "T16", color: "#3b82f6" },
+    { path: "#/recruitment", label: "Tuyển dụng", task: "T17", color: "#8b5cf6" },
+    { path: "#/performance/kpi", label: "Đánh giá KPI/OKR", task: "T18", color: "#06b6d4" },
+    { path: "#/payroll/run", label: "Payroll Run - Kỳ lĩnh lương", task: "T19", color: "#10b981" },
+    { path: "#/training", label: "Đào tạo", task: "T20", color: "#ec4899" },
   ];
 
   return (
     <div style={{ padding: 0 }}>
-      {/* Header banner */}
       <div style={{
         background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%)",
         color: "white",
@@ -210,7 +204,7 @@ function Dashboard() {
       }}>
         <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>HRM_Epath</h1>
         <p style={{ margin: "8px 0 0", opacity: 0.85, fontSize: 15 }}>
-          He thong quan ly nhan su · V13 · {new Date().getFullYear()}
+          Hệ thống quản lý nhân sự · V13 · {new Date().getFullYear()}
         </p>
         <div style={{ marginTop: 12, display: "flex", gap: 16, flexWrap: "wrap" }}>
           <span style={{ background: "rgba(255,255,255,0.15)", padding: "4px 12px", borderRadius: 20, fontSize: 13 }}>
@@ -222,11 +216,10 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Login info */}
       <div style={{ padding: "0 48px", marginTop: 32, marginBottom: 24 }}>
         <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 12, padding: "16px 24px" }}>
-          <strong style={{ color: "#92400e" }}>Tai khoan test</strong>
-          <span style={{ color: "#78350f" }}> (password: </span>
+          <strong style={{ color: "#92400e" }}>Tài khoản test</strong>
+          <span style={{ color: "#78350f" }}> (mật khẩu: </span>
           <code style={{ background: "#fef3c7", padding: "1px 6px", borderRadius: 4, color: "#92400e" }}>123456</code>
           <span style={{ color: "#78350f" }}>)</span>
           <div style={{ marginTop: 8, display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -245,10 +238,9 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Modules grid */}
       <div style={{ padding: "0 48px", marginBottom: 32 }}>
         <h2 style={{ fontSize: 18, fontWeight: 600, color: "#1e293b", marginBottom: 16 }}>
-          Cac module ({modules.length} modules)
+          Các module ({modules.length} modules)
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
           {modules.map((m) => (
@@ -289,23 +281,22 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Seed data info */}
       <div style={{ padding: "0 48px 48px" }}>
         <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 12, padding: "20px 24px" }}>
-          <h3 style={{ margin: "0 0 12px", fontSize: 15, color: "#166534" }}>Seed Data da nap</h3>
+          <h3 style={{ margin: "0 0 12px", fontSize: 15, color: "#166534" }}>Dữ liệu mẫu đã nạp</h3>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 8 }}>
             {[
-              ["Nhan vien", "5 NV (NV001–NV005) + NV006 (da nghi)"],
-              ["Phong ban", "5 phong ban (PGD, PNS, PKT, PIT, PKD)"],
-              ["Bang cong", "Thang 5/2026 — 5 NV — trang thai DA_CHOT"],
-              ["Bang luong", "5 bang luong — trang thai DA_DUYET"],
-              ["Ky linh luong", "2 ky (1 DA_CHI_TRA, 1 DA_DUYET_CAP_2)"],
-              ["BHXH", "5 NV — qua trinh DANG_DONG"],
-              ["Cam ket 08", "5 NV — UY_QUYEN_QTT"],
-              ["Tuyen dung", "2 yeu cau (MOI_TAO + DANG_TUYEN)"],
-              ["KPI", "1 cycle Q2/2026 — 4 assignments"],
-              ["Dao tao", "3 CT, 2 lop, 6 dang ky, 4 diem danh"],
-              ["Offboarding", "1 case NV006 — HOAN_THANH"],
+              ["Nhân viên", "5 NV (NV001–NV005) + NV006 (đã nghỉ)"],
+              ["Phòng ban", "5 phòng ban (PGD, PNS, PKT, PIT, PKD)"],
+              ["Bảng công", "Tháng 5/2026 — 5 NV — trạng thái ĐÃ CHỐT"],
+              ["Bảng lương", "5 bảng lương — trạng thái ĐÃ DUYỆT"],
+              ["Kỳ lĩnh lương", "2 kỳ (1 ĐÃ CHI TRẢ, 1 ĐÃ DUYỆT CẤP 2)"],
+              ["BHXH", "5 NV — quá trình ĐANG ĐÓNG"],
+              ["Cam kết 08", "5 NV — ỦY QUYỀN QTT"],
+              ["Tuyển dụng", "2 yêu cầu (MỚI TẠO + ĐANG TUYỂN)"],
+              ["KPI", "1 chu kỳ Q2/2026 — 4 phân công"],
+              ["Đào tạo", "3 CT, 2 lớp, 6 đăng ký, 4 điểm danh"],
+              ["Offboarding", "1 hồ sơ NV006 — HOÀN THÀNH"],
             ].map(([k, v]) => (
               <div key={k} style={{ fontSize: 13 }}>
                 <strong style={{ color: "#166534" }}>{k}:</strong>{" "}
@@ -320,14 +311,12 @@ function Dashboard() {
 }
 
 // ============================================================================
-// APP — root with HashRouter + layout route pattern
-// AppLayout wraps all routes via <Route element={<AppLayout />} >
+// APP — Gốc với HashRouter + layout route pattern
 // ============================================================================
 function App() {
   return (
     <HashRouter>
       <Routes>
-        {/* Layout route — AppLayout renders <Outlet /> for child routes */}
         <Route element={<AppLayout />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/hr/departments" element={<DepartmentPage />} />
