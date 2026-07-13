@@ -1,4 +1,4 @@
-// T11: System Admin page (Company, Role, User, Audit)
+// T11: Trang quản trị hệ thống (Công ty, Vai trò, Tài khoản, Kiểm toán)
 import { useState, useEffect } from "react";
 import { PageHeader } from "../components/SharedComponents";
 import { companyApi, userApi } from "../api";
@@ -14,7 +14,7 @@ function StatusChip({ status }: { status: string }) {
     PENDING: { bg: "#fef3c7", color: "#92400e" },
   };
   const c = COLORS[status] || { bg: "#f3f4f6", color: "#6b7280" };
-  const L: Record<string, string> = { ACTIVE: "Active", LOCKED: "Bi khoa", PENDING: "Cho kich hoat" };
+  const L: Record<string, string> = { ACTIVE: "Đang hoạt động", LOCKED: "Bị khoá", PENDING: "Chờ kích hoạt" };
   return <Chip bg={c.bg} color={c.color}>{L[status] || status}</Chip>;
 }
 
@@ -24,12 +24,12 @@ function fmtDate(iso: string | null) {
 }
 
 const ROLES = [
-  { code: "SYSTEM_ADMIN", name: "Quan tri he thong" },
-  { code: "COMPANY_ADMIN", name: "Quan tri cong ty" },
-  { code: "HR_MANAGER", name: "Quan ly Nhan su" },
-  { code: "ACCOUNTANT", name: "Ke toan" },
-  { code: "MANAGER", name: "Quan ly" },
-  { code: "EMPLOYEE", name: "Nhan vien" },
+  { code: "SYSTEM_ADMIN", name: "Quản trị hệ thống" },
+  { code: "COMPANY_ADMIN", name: "Quản trị công ty" },
+  { code: "HR_MANAGER", name: "Quản lý Nhân sự" },
+  { code: "ACCOUNTANT", name: "Kế toán" },
+  { code: "MANAGER", name: "Quản lý" },
+  { code: "EMPLOYEE", name: "Nhân viên" },
 ];
 
 export default function SystemAdminPage() {
@@ -59,7 +59,6 @@ export default function SystemAdminPage() {
         setUsers(Array.isArray(data) ? data : data.content || []);
       }
       else if (tab === "audit") {
-        // audit not yet in api.ts; use empty for now
         setAuditPage({ content: [], totalElements: 0 });
       }
     } finally { setLoading(false); }
@@ -70,17 +69,17 @@ export default function SystemAdminPage() {
   }
 
   async function handleCreateCompany() {
-    try { await companyApi.create(coForm); setShowCoForm(false); loadData(); showMsg("ok", "Tao cong ty thanh cong"); }
+    try { await companyApi.create(coForm); setShowCoForm(false); loadData(); showMsg("ok", "Tạo công ty thành công"); }
     catch (e: any) { showMsg("err", e.message); }
   }
 
   async function handleCreateUser() {
-    try { await userApi.create(userForm); setShowUserForm(false); loadData(); showMsg("ok", "Tao tai khoan thanh cong"); }
+    try { await userApi.create(userForm); setShowUserForm(false); loadData(); showMsg("ok", "Tạo tài khoản thành công"); }
     catch (e: any) { showMsg("err", e.message); }
   }
 
   async function handleLockUnlock(userId: string, lock: boolean) {
-    try { lock ? await userApi.lock(userId) : await userApi.unlock(userId); loadData(); showMsg("ok", lock ? "Khoa tai khoan" : "Mo khoa tai khoan"); }
+    try { lock ? await userApi.lock(userId) : await userApi.unlock(userId); loadData(); showMsg("ok", lock ? "Khoá tài khoản" : "Mở khoá tài khoản"); }
     catch (e: any) { showMsg("err", e.message); }
   }
 
@@ -89,15 +88,15 @@ export default function SystemAdminPage() {
 
   return (
     <div>
-      <PageHeader title="Quan tri he thong" subtitle="T11 — Cong ty, tai khoan, phan quyen, lich su kiem toan" />
+      <PageHeader title="Quản trị hệ thống" subtitle="T11 — Công ty, tài khoản, phân quyền, lịch sử kiểm toán" />
       <div style={{ padding: "16px 24px" }}>
         {msg && <div style={{ padding: "8px 16px", background: msg.type === "ok" ? "#dcfce7" : "#fee2e2", color: msg.type === "ok" ? "#166534" : "#991b1b", borderRadius: 6, marginBottom: 12 }}>{msg.text}</div>}
 
         <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
           {[
-            { key: "company", label: "Cong ty", color: "#3b82f6" },
-            { key: "user", label: "Tai khoan", color: "#10b981" },
-            { key: "audit", label: "Lich su kiem toan", color: "#6b7280" },
+            { key: "company", label: "Công ty", color: "#3b82f6" },
+            { key: "user", label: "Tài khoản", color: "#10b981" },
+            { key: "audit", label: "Lịch sử kiểm toán", color: "#6b7280" },
           ].map(t => (
             <button key={t.key} onClick={() => setTab(t.key as any)} style={{ padding: "8px 16px", background: tab === t.key ? t.color : "#e2e8f0", color: tab === t.key ? "#fff" : "#334", border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 600 }}>
               {t.label}
@@ -105,13 +104,13 @@ export default function SystemAdminPage() {
           ))}
         </div>
 
-        {/* COMPANIES */}
+        {/* CÔNG TY */}
         {tab === "company" && (
           <div>
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
-              <button onClick={() => { setCoForm({ maSoThue: "", tenCongTy: "", diaChi: "", dienThoai: "", email: "", ngayThanhLap: "" }); setShowCoForm(true); }} style={{ padding: "8px 16px", background: "#3b82f6", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}>+ Them cong ty</button>
+              <button onClick={() => { setCoForm({ maSoThue: "", tenCongTy: "", diaChi: "", dienThoai: "", email: "", ngayThanhLap: "" }); setShowCoForm(true); }} style={{ padding: "8px 16px", background: "#3b82f6", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}>+ Thêm công ty</button>
             </div>
-            {loading ? <div style={{ padding: 24, color: "#64748b" }}>Dang tai...</div> : (
+            {loading ? <div style={{ padding: 24, color: "#64748b" }}>Đang tải...</div> : (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
                 {companies.map(co => (
                   <div key={co.companyId} style={{ background: "#fff", borderRadius: 12, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}>
@@ -123,9 +122,9 @@ export default function SystemAdminPage() {
                       <StatusChip status={co.trangThai} />
                     </div>
                     <div style={{ fontSize: 13, color: "#475569", display: "grid", gap: 4 }}>
-                      <div>Dia chi: <strong>{co.diaChi}</strong></div>
-                      <div>DT: <strong>{co.dienThoai}</strong> · Email: <strong>{co.email}</strong></div>
-                      <div>Thanh lap: <strong>{co.ngayThanhLap}</strong></div>
+                      <div>Địa chỉ: <strong>{co.diaChi}</strong></div>
+                      <div>ĐT: <strong>{co.dienThoai}</strong> · Email: <strong>{co.email}</strong></div>
+                      <div>Thành lập: <strong>{co.ngayThanhLap}</strong></div>
                     </div>
                   </div>
                 ))}
@@ -134,21 +133,21 @@ export default function SystemAdminPage() {
           </div>
         )}
 
-        {/* USERS */}
+        {/* TÀI KHOẢN */}
         {tab === "user" && (
           <div>
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
-              <button onClick={() => { setUserForm({ username: "", email: "", roleCodes: [], employeeId: "" }); setShowUserForm(true); }} style={{ padding: "8px 16px", background: "#10b981", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}>+ Them tai khoan</button>
+              <button onClick={() => { setUserForm({ username: "", email: "", roleCodes: [], employeeId: "" }); setShowUserForm(true); }} style={{ padding: "8px 16px", background: "#10b981", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}>+ Thêm tài khoản</button>
             </div>
-            {loading ? <div style={{ padding: 24, color: "#64748b" }}>Dang tai...</div> : (
+            {loading ? <div style={{ padding: 24, color: "#64748b" }}>Đang tải...</div> : (
               <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", borderRadius: 8, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}>
                 <thead><tr style={{ background: "#f8fafc" }}>
                   <th style={{ padding: "10px 16px", textAlign: "left", fontSize: 13 }}>Username</th>
                   <th style={{ padding: "10px 8px", textAlign: "left", fontSize: 13 }}>Email</th>
-                  <th style={{ padding: "10px 8px", textAlign: "left", fontSize: 13 }}>Vai tro</th>
-                  <th style={{ padding: "10px 8px", textAlign: "center", fontSize: 13 }}>Trang thai</th>
-                  <th style={{ padding: "10px 8px", textAlign: "left", fontSize: 13 }}>Dang nhap cuoi</th>
-                  <th style={{ padding: "10px 8px", textAlign: "left", fontSize: 13 }}>Hanh dong</th>
+                  <th style={{ padding: "10px 8px", textAlign: "left", fontSize: 13 }}>Vai trò</th>
+                  <th style={{ padding: "10px 8px", textAlign: "center", fontSize: 13 }}>Trạng thái</th>
+                  <th style={{ padding: "10px 8px", textAlign: "left", fontSize: 13 }}>Đăng nhập cuối</th>
+                  <th style={{ padding: "10px 8px", textAlign: "left", fontSize: 13 }}>Hành động</th>
                 </tr></thead>
                 <tbody>
                   {users.map(u => (
@@ -164,9 +163,9 @@ export default function SystemAdminPage() {
                       <td style={{ padding: "10px 8px", fontSize: 12, color: "#64748b" }}>{fmtDate(u.lastLogin)}</td>
                       <td style={{ padding: "10px 8px" }}>
                         {u.trangThai === "LOCKED" ? (
-                          <button onClick={() => handleLockUnlock(u.userId, false)} style={{ padding: "4px 8px", background: "#dcfce7", color: "#166534", border: "1px solid #86efac", borderRadius: 4, cursor: "pointer", fontSize: 12 }}>Mo khoa</button>
+                          <button onClick={() => handleLockUnlock(u.userId, false)} style={{ padding: "4px 8px", background: "#dcfce7", color: "#166534", border: "1px solid #86efac", borderRadius: 4, cursor: "pointer", fontSize: 12 }}>Mở khoá</button>
                         ) : (
-                          <button onClick={() => handleLockUnlock(u.userId, true)} style={{ padding: "4px 8px", background: "#fee2e2", color: "#991b1b", border: "1px solid #fca5a5", borderRadius: 4, cursor: "pointer", fontSize: 12 }}>Khoa</button>
+                          <button onClick={() => handleLockUnlock(u.userId, true)} style={{ padding: "4px 8px", background: "#fee2e2", color: "#991b1b", border: "1px solid #fca5a5", borderRadius: 4, cursor: "pointer", fontSize: 12 }}>Khoá</button>
                         )}
                       </td>
                     </tr>
@@ -177,25 +176,25 @@ export default function SystemAdminPage() {
           </div>
         )}
 
-        {/* AUDIT */}
+        {/* KIỂM TOÁN */}
         {tab === "audit" && (
           <div>
             <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
               <select value={auditFilter.module} onChange={e => { setAuditFilter({ module: e.target.value }); }} style={{ ...inputStyle, width: 180, marginBottom: 0 }}>
-                <option value="">Tat ca module</option>
+                <option value="">Tất cả module</option>
                 <option value="hr">HR</option>
                 <option value="payroll">Payroll</option>
                 <option value="system">System</option>
                 <option value="timekeeping">Timekeeping</option>
                 <option value="social_ins">Social Ins</option>
               </select>
-              <button onClick={loadData} style={{ padding: "8px 16px", background: "#3b82f6", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}>Loc</button>
+              <button onClick={loadData} style={{ padding: "8px 16px", background: "#3b82f6", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}>Lọc</button>
             </div>
-            {loading ? <div style={{ padding: 24, color: "#64748b" }}>Dang tai...</div> : (
+            {loading ? <div style={{ padding: 24, color: "#64748b" }}>Đang tải...</div> : (
               <div>
-                <div style={{ fontSize: 13, color: "#64748b", marginBottom: 8 }}>Tong: {auditPage?.totalElements || 0} ban ghi</div>
+                <div style={{ fontSize: 13, color: "#64748b", marginBottom: 8 }}>Tổng: {auditPage?.totalElements || 0} bản ghi</div>
                 <div style={{ background: "#fff", borderRadius: 8, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}>
-                  {auditPage?.content?.length === 0 && <div style={{ padding: 32, textAlign: "center", color: "#94a3b8" }}>Khong co du lieu</div>}
+                  {auditPage?.content?.length === 0 && <div style={{ padding: 32, textAlign: "center", color: "#94a3b8" }}>Không có dữ liệu</div>}
                   {(auditPage?.content || []).map((log: any, i: number) => (
                     <div key={log.id} style={{ padding: "12px 20px", borderBottom: i < (auditPage.content?.length || 0) - 1 ? "1px solid #f1f5f9" : "none" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 }}>
@@ -217,32 +216,32 @@ export default function SystemAdminPage() {
         )}
       </div>
 
-      {/* Company form */}
+      {/* Form công ty */}
       {showCoForm && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }} onClick={() => setShowCoForm(false)}>
           <div style={cardStyle} onClick={e => e.stopPropagation()}>
-            <h3 style={{ margin: "0 0 16px" }}>Them cong ty</h3>
-            {[["maSoThue", "Ma so thue *"], ["tenCongTy", "Ten cong ty *"], ["diaChi", "Dia chi"], ["dienThoai", "Dien thoai"], ["email", "Email"]].map(([f, l]) => (
+            <h3 style={{ margin: "0 0 16px" }}>Thêm công ty</h3>
+            {[["maSoThue", "Mã số thuế *"], ["tenCongTy", "Tên công ty *"], ["diaChi", "Địa chỉ"], ["dienThoai", "Điện thoại"], ["email", "Email"]].map(([f, l]) => (
               <div key={String(f)}>
                 <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>{String(l)}</label>
                 <input style={inputStyle} value={(coForm as any)[String(f)]} onChange={e => setCoForm(f => ({ ...f, [String(f)]: e.target.value }))} />
               </div>
             ))}
-            <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>Ngay thanh lap</label>
+            <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>Ngày thành lập</label>
             <input style={inputStyle} type="date" value={coForm.ngayThanhLap} onChange={e => setCoForm(f => ({ ...f, ngayThanhLap: e.target.value }))} />
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 8 }}>
-              <button onClick={() => setShowCoForm(false)} style={{ padding: "8px 16px", background: "#e2e8f0", border: "none", borderRadius: 6, cursor: "pointer" }}>Huy</button>
-              <button onClick={handleCreateCompany} style={{ padding: "8px 16px", background: "#3b82f6", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}>Tao</button>
+              <button onClick={() => setShowCoForm(false)} style={{ padding: "8px 16px", background: "#e2e8f0", border: "none", borderRadius: 6, cursor: "pointer" }}>Huỷ</button>
+              <button onClick={handleCreateCompany} style={{ padding: "8px 16px", background: "#3b82f6", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}>Tạo</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* User form */}
+      {/* Form tài khoản */}
       {showUserForm && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }} onClick={() => setShowUserForm(false)}>
           <div style={cardStyle} onClick={e => e.stopPropagation()}>
-            <h3 style={{ margin: "0 0 16px" }}>Them tai khoan</h3>
+            <h3 style={{ margin: "0 0 16px" }}>Thêm tài khoản</h3>
             <div>
               <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>Username *</label>
               <input style={inputStyle} value={userForm.username} onChange={e => setUserForm(f => ({ ...f, username: e.target.value }))} />
@@ -252,7 +251,7 @@ export default function SystemAdminPage() {
               <input style={inputStyle} value={userForm.email} onChange={e => setUserForm(f => ({ ...f, email: e.target.value }))} />
             </div>
             <div>
-              <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 8 }}>Vai tro</label>
+              <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 8 }}>Vai trò</label>
               <div style={{ display: "flex", flexDirection: "column", gap: 6, maxHeight: 160, overflowY: "auto" }}>
                 {ROLES.map(role => (
                   <label key={role.code} style={{ display: "flex", gap: 8, alignItems: "center", cursor: "pointer" }}>
@@ -263,8 +262,8 @@ export default function SystemAdminPage() {
               </div>
             </div>
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 16 }}>
-              <button onClick={() => setShowUserForm(false)} style={{ padding: "8px 16px", background: "#e2e8f0", border: "none", borderRadius: 6, cursor: "pointer" }}>Huy</button>
-              <button onClick={handleCreateUser} style={{ padding: "8px 16px", background: "#10b981", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}>Tao</button>
+              <button onClick={() => setShowUserForm(false)} style={{ padding: "8px 16px", background: "#e2e8f0", border: "none", borderRadius: 6, cursor: "pointer" }}>Huỷ</button>
+              <button onClick={handleCreateUser} style={{ padding: "8px 16px", background: "#10b981", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}>Tạo</button>
             </div>
           </div>
         </div>
