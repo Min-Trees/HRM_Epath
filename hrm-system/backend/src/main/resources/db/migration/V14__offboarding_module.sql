@@ -78,6 +78,8 @@ CREATE TABLE hr.offboarding_case (
     quyet_toan_thue_id     UUID,                            -- FK sang quyet_toan_thue khi phat sinh
     created_at           TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at           TIMESTAMPTZ NOT NULL DEFAULT now(),
+    created_by           UUID,
+    updated_by           UUID,
     CONSTRAINT chk_ngay_nghi CHECK (ngay_chinh_thuc_nghi >= ngay_nghi_viec_cuoi)
 );
 

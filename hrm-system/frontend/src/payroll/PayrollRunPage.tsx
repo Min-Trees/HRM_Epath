@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { payrollRunMock } from "../mock/payroll-run.mock";
 
 const STATUS_COLORS: Record<string, string> = {

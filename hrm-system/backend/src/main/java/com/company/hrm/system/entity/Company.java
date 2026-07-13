@@ -2,6 +2,8 @@ package com.company.hrm.system.entity;
 
 import com.company.hrm.common.audit.BaseAuditEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -49,7 +51,8 @@ public class Company extends BaseAuditEntity {
     private String goiDichVu;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "trang_thai", nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "trang_thai", nullable = false, columnDefinition = "system.trang_thai_company")
     private TrangThaiCompany trangThai = TrangThaiCompany.HOAT_DONG;
 
     public UUID getCompanyId() { return companyId; }

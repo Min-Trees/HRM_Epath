@@ -138,16 +138,7 @@ CREATE TABLE recruitment.danh_gia_ung_vien (
     diem_giao_tiep      INTEGER CHECK (diem_giao_tiep BETWEEN 0 AND 10),
     diem_thai_do        INTEGER CHECK (diem_thai_do BETWEEN 0 AND 10),
     diem_ket_qua        INTEGER CHECK (diem_ket_qua BETWEEN 0 AND 10),
-    diem_trung_binh     NUMERIC(4,2) GENERATED ALWAYS AS (
-        (COALESCE(diem_ky_thuat, 0) + COALESCE(diem_giao_tiep, 0)
-         + COALESCE(diem_thai_do, 0) + COALESCE(diem_ket_qua, 0))
-        / NULLIF(
-            (CASE WHEN diem_ky_thuat IS NOT NULL THEN 1 ELSE 0 END) +
-            (CASE WHEN diem_giao_tiep IS NOT NULL THEN 1 ELSE 0 END) +
-            (CASE WHEN diem_thai_do IS NOT NULL THEN 1 ELSE 0 END) +
-            (CASE WHEN diem_ket_qua IS NOT NULL THEN 1 ELSE 0 END),
-          0)
-    ) STORED,
+    diem_trung_binh     NUMERIC(4,2),  -- tinh o service (avg cac diem != null)
     ket_qua             recruitment.ket_qua_phong_van NOT NULL,
     diem_manh           TEXT,
     diem_yeu            TEXT,
