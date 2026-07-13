@@ -48,7 +48,7 @@ export default function KpiPage() {
     });
     setAssignments((prev) => prev.map((a) => a.assignmentId === updated.assignmentId ? updated : a));
     setSelectedAssign(updated);
-    alert("Review thành công");
+    alert("Quản lý đánh giá thành công");
   };
 
   const submitApprove = async () => {
@@ -65,8 +65,8 @@ export default function KpiPage() {
 
   return (
     <div style={{ padding: 24, fontFamily: "system-ui, sans-serif" }}>
-      <h2>Module Đánh giá hiệu suất (T18)</h2>
-      <p style={{ color: "#64748b" }}>KPI/OKR theo chu kỳ: NV tự đánh giá → Manager review → HR phê duyệt xếp loại</p>
+      <h2>Phân hệ Đánh giá hiệu suất (T18)</h2>
+      <p style={{ color: "#64748b" }}>KPI/OKR theo chu kỳ: Nhân viên tự đánh giá → Quản lý đánh giá → HR phê duyệt xếp loại</p>
 
       <section style={{ background: "#fff", padding: 16, borderRadius: 8, marginBottom: 16 }}>
         <h3>Chu kỳ đánh giá</h3>
@@ -90,7 +90,7 @@ export default function KpiPage() {
                 <StatusChip status={c.trangThai} />
               </div>
               <div style={{ fontSize: 12, marginTop: 4 }}>
-                {c.soMucTieu} mục tiêu · {c.soNvThamGia} NV
+                {c.soMucTieu} mục tiêu · {c.soNvThamGia} nhân viên
               </div>
             </div>
           ))}
@@ -106,9 +106,9 @@ export default function KpiPage() {
                 <th style={th}>Mục tiêu</th>
                 <th style={th}>Loại</th>
                 <th style={th}>Đơn vị</th>
-                <th style={th}>Target</th>
+                <th style={th}>Chỉ tiêu</th>
                 <th style={th}>Trọng số</th>
-                <th style={th}>NV</th>
+                <th style={th}>Nhân viên</th>
                 <th style={th}>Trạng thái</th>
                 <th style={th}>Điểm</th>
                 <th style={th}>Xếp loại</th>
@@ -144,8 +144,8 @@ export default function KpiPage() {
         <section style={{ background: "#fff", padding: 16, borderRadius: 8, marginBottom: 16 }}>
           <h3>Chi tiết: {selectedAssign.tenMucTieu}</h3>
           <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-            <TabBtn active={view === "self"} onClick={() => setView("self")}>NV tự đánh giá</TabBtn>
-            <TabBtn active={view === "review"} onClick={() => setView("review")}>Manager review</TabBtn>
+            <TabBtn active={view === "self"} onClick={() => setView("self")}>Nhân viên tự đánh giá</TabBtn>
+            <TabBtn active={view === "review"} onClick={() => setView("review")}>Quản lý đánh giá</TabBtn>
             <TabBtn active={view === "approve"} onClick={() => setView("approve")}>HR phê duyệt</TabBtn>
           </div>
 
@@ -157,7 +157,7 @@ export default function KpiPage() {
               <Field label="Điểm tự đánh giá (0-100)">
                 <input type="number" value={diemTuDanhGia} onChange={(e) => setDiemTuDanhGia(e.target.value)} style={inp} />
               </Field>
-              <Field label="Nhận xét NV" full>
+              <Field label="Nhận xét của nhân viên" full>
                 <textarea value={nhanXetNV} onChange={(e) => setNhanXetNV(e.target.value)} style={{ ...inp, height: 80 }} />
               </Field>
               <div style={{ gridColumn: "span 2" }}>
@@ -166,7 +166,7 @@ export default function KpiPage() {
                 </button>
                 {selectedAssign.trangThai !== "MOI_GAN" && (
                   <span style={{ marginLeft: 12, color: "#64748b", fontSize: 13 }}>
-                    (Trạng thái hiện tại: {selectedAssign.trangThai})
+                    (Trạng thái hiện tại: {statusLabel(selectedAssign.trangThai)})
                   </span>
                 )}
               </div>
@@ -175,7 +175,7 @@ export default function KpiPage() {
 
           {view === "review" && (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-              <Field label="Điểm Manager (0-100)">
+              <Field label="Điểm của quản lý (0-100)">
                 <input type="number" value={diemManager} onChange={(e) => setDiemManager(e.target.value)} style={inp} />
               </Field>
               <Field label="Đề xuất xếp loại">
@@ -186,12 +186,12 @@ export default function KpiPage() {
                   <option value="D">D - Yếu</option>
                 </select>
               </Field>
-              <Field label="Nhận xét Manager" full>
+              <Field label="Nhận xét của quản lý" full>
                 <textarea value={nhanXetManager} onChange={(e) => setNhanXetManager(e.target.value)} style={{ ...inp, height: 80 }} />
               </Field>
               <div style={{ gridColumn: "span 2" }}>
                 <button onClick={submitReview} style={{ ...btn, background: "#0d9488" }} disabled={selectedAssign.trangThai !== "NV_DA_TU_DANH_GIA"}>
-                  Gửi review
+                  Gửi đánh giá
                 </button>
               </div>
             </div>
@@ -199,10 +199,10 @@ export default function KpiPage() {
 
           {view === "approve" && (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-              <Field label="Điểm cuối (0-100)">
+              <Field label="Điểm cuối kỳ (0-100)">
                 <input type="number" value={diemCuoi} onChange={(e) => setDiemCuoi(e.target.value)} style={inp} />
               </Field>
-              <Field label="Xếp loại cuối">
+              <Field label="Xếp loại cuối kỳ">
                 <select value={xepLoaiCuoi} onChange={(e) => setXepLoaiCuoi(e.target.value)} style={inp}>
                   <option value="A">A - Xuất sắc</option>
                   <option value="B">B - Tốt</option>
@@ -215,17 +215,17 @@ export default function KpiPage() {
               </Field>
               <div style={{ gridColumn: "span 2" }}>
                 <button onClick={submitApprove} style={{ ...btn, background: "#0d9488" }} disabled={selectedAssign.trangThai !== "MANAGER_DA_REVIEW"}>
-                  Phê duyệt HR
+                  HR phê duyệt
                 </button>
               </div>
             </div>
           )}
 
           <div style={{ marginTop: 16, padding: 12, background: "#f8fafc", borderRadius: 6, fontSize: 13 }}>
-            <div>Điểm NV tự đánh giá: <strong>{selectedAssign.diemTuDanhGia?.toFixed(2) || "-"}</strong></div>
-            <div>Điểm Manager: <strong>{selectedAssign.diemManager?.toFixed(2) || "-"}</strong></div>
-            <div>Điểm trung bình: <strong>{selectedAssign.diemTrungBinh?.toFixed(2) || "-"}</strong> (40% NV + 60% Manager)</div>
-            <div>Xếp loại cuối: <strong>{selectedAssign.xepLoaiCuoi || "-"}</strong></div>
+            <div>Điểm nhân viên tự đánh giá: <strong>{selectedAssign.diemTuDanhGia?.toFixed(2) || "-"}</strong></div>
+            <div>Điểm quản lý: <strong>{selectedAssign.diemManager?.toFixed(2) || "-"}</strong></div>
+            <div>Điểm trung bình: <strong>{selectedAssign.diemTrungBinh?.toFixed(2) || "-"}</strong> (40% nhân viên + 60% quản lý)</div>
+            <div>Xếp loại cuối kỳ: <strong>{selectedAssign.xepLoaiCuoi || "-"}</strong></div>
           </div>
         </section>
       )}
@@ -255,6 +255,22 @@ function TabBtn({ active, onClick, children }: any) {
   );
 }
 
+const STATUS_LABELS: Record<string, string> = {
+  MOI_TAO: "Mới tạo",
+  DANG_DANH_GIA: "Đang đánh giá",
+  DA_DONG: "Đã đóng",
+  HUY: "Hủy",
+  MOI_GAN: "Mới giao",
+  NV_DA_TU_DANH_GIA: "Nhân viên đã tự đánh giá",
+  MANAGER_DA_REVIEW: "Quản lý đã đánh giá",
+  HR_DA_PHE_DUYET: "HR đã phê duyệt",
+  TU_CHOI: "Từ chối",
+};
+
+function statusLabel(status: string) {
+  return STATUS_LABELS[status] ?? status;
+}
+
 function StatusChip({ status }: { status: string }) {
   const colorMap: Record<string, string> = {
     MOI_TAO: "#94a3b8", DANG_DANH_GIA: "#3b82f6", DA_DONG: "#64748b", HUY: "#ef4444",
@@ -262,7 +278,7 @@ function StatusChip({ status }: { status: string }) {
     HR_DA_PHE_DUYET: "#10b981", TU_CHOI: "#ef4444",
   };
   const color = colorMap[status] ?? "#64748b";
-  return <span style={{ background: color, color: "#fff", padding: "2px 8px", borderRadius: 12, fontSize: 12 }}>{status}</span>;
+  return <span style={{ background: color, color: "#fff", padding: "2px 8px", borderRadius: 12, fontSize: 12 }}>{statusLabel(status)}</span>;
 }
 
 const lbl: React.CSSProperties = { display: "block", fontSize: 12, color: "#64748b", marginBottom: 4 };
