@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { offboardingApi } from "../mock/offboarding.mock";
+import { offboardingApi } from "../api";
 
 export default function OffboardingDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -18,7 +18,7 @@ export default function OffboardingDetailPage() {
       offboardingApi.getSeverance(id),
     ]).then(([c, t, s]) => {
       setCaseData(c);
-      setTasks(t);
+      setTasks(Array.isArray(t) ? t : []);
       setSeverance(s);
       setLoading(false);
     });
@@ -115,7 +115,6 @@ export default function OffboardingDetailPage() {
     updated[idx] = { ...t, trangThai: newStatus };
     setTasks(updated);
     offboardingApi.updateTask(t.taskId, newStatus).then(() => {
-      // refresh case to update progress
       offboardingApi.get(id).then(setCaseData);
     });
   }

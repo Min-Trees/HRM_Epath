@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { bhxhReportMock } from "../mock/bhxh.mock";
+import { bhxhReportApi } from "../api";
 
 export default function BhxhReportPage() {
   const [reportType, setReportType] = useState<"D02-LT" | "D03-LT">("D02-LT");
@@ -11,21 +11,30 @@ export default function BhxhReportPage() {
   const [denNgay, setDenNgay] = useState(() => new Date().toISOString().slice(0, 10));
   const [maDonVi, setMaDonVi] = useState("DV-001");
   const [tenDonVi, setTenDonVi] = useState("Cong ty TNHH ABC");
+  const [maSoThue, setMaSoThue] = useState("");
   const [report, setReport] = useState<any>(null);
   const [xmlContent, setXmlContent] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
   const generate = async () => {
     setLoading(true);
-    const r = reportType === "D02-LT"
-      ? await bhxhReportMock.generateD02LT(tuNgay, denNgay, maDonVi, tenDonVi)
-      : await bhxhReportMock.generateD03LT(tuNgay, denNgay, maDonVi, tenDonVi);
-    setReport(r);
-    const xml = reportType === "D02-LT"
-      ? await bhxhReportMock.exportXmlD02LT(tuNgay, denNgay, maDonVi, tenDonVi)
-      : await bhxhReportMock.exportXmlD03LT(tuNgay, denNgay, maDonVi, tenDonVi);
-    setXmlContent(xml);
-    setLoading(false);
+    try {
+      let r: any;
+      let xml: string;
+      if (reportType === "D02-LT") {
+        r = await bhxhReportApi.generateD02(tuNgay, denNgay, maDonVi, tenDonVi, maSoThue);
+        xml = await bhxhReportApi.downloadD02Xml(tuNgay, denNgay, maDonVi, tenDonVi, maSoThue);
+      } else {
+        r = await bhxhReportApi.generateD03(tuNgay, denNgay, maDonVi, tenDonVi);
+        xml = await bhxhReportApi.downloadD03Xml(tuNgay, denNgay, maDonVi, tenDonVi);
+      }
+      setReport(r);
+      setXmlContent(xml);
+    } catch (e: any) {
+      alert(e.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const downloadXml = () => {
@@ -69,6 +78,12 @@ export default function BhxhReportPage() {
             <label style={lblStyle}>Ten don vi</label>
             <input value={tenDonVi} onChange={(e) => setTenDonVi(e.target.value)} style={{ ...inpStyle, width: 220 }} />
           </div>
+          {reportType === "D02-LT" && (
+            <div>
+              <label style={lblStyle}>Ma so thue</label>
+              <input value={maSoThue} onChange={(e) => setMaSoThue(e.target.value)} style={inpStyle} />
+            </div>
+          )}
           <button onClick={generate} disabled={loading} style={{ ...btnStyle, background: "#0d9488" }}>
             {loading ? "Dang tao..." : "Tao bao cao"}
           </button>

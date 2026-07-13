@@ -1,9 +1,8 @@
 // T08 + T09: Shift management + Attendance page
 import { useState, useEffect } from "react";
 import { PageHeader } from "../components/SharedComponents";
-import { shiftMock } from "../mock/shift.mock";
-import { attendanceMock } from "../mock/attendance.mock";
-import { employeeMock } from "../mock/employee.mock";
+import { shiftApi, shiftAssignmentApi, timeLogApi } from "../api";
+import { employeeApi } from "../api";
 
 const LOAI_CA: Record<string, string> = {
   HANH_CHINH: "Hanh chinh", CA_KIP: "Ca kip", FLEXIBLE: "Linh hoat",
@@ -44,11 +43,14 @@ export default function AttendancePage() {
 
   async function loadShifts() {
     setLoading(true);
-    try { setShifts(await shiftMock.listShifts(true)); } finally { setLoading(false); }
+    try {
+      const data = await shiftApi.list(true);
+      setShifts(Array.isArray(data) ? data : data.content || []);
+    } finally { setLoading(false); }
   }
 
   async function loadEmployees() {
-    try { const r = await employeeMock.list({ page: 0, size: 100 }); setEmployees(r.content); } catch {}
+    try { const r = await employeeApi.list("", undefined, undefined, 0, 100); setEmployees(r.content); } catch {}
   }
 
   async function loadAssignments() {
@@ -57,8 +59,8 @@ export default function AttendancePage() {
     const from = `${y}-${m}-01`;
     const to = `${y}-${m}-${String(days).padStart(2, "0")}`;
     try {
-      const all = await shiftMock.listAssignments("", from, to);
-      setAssignments(all.slice(0, 50));
+      const data = await shiftAssignmentApi.list("", from, to);
+      setAssignments(Array.isArray(data) ? data.slice(0, 50) : (data.content || []).slice(0, 50));
     } catch {}
   }
 
@@ -67,7 +69,10 @@ export default function AttendancePage() {
     const days = new Date(parseInt(y), parseInt(m), 0).getDate();
     const from = `${y}-${m}-01`;
     const to = `${y}-${m}-${String(days).padStart(2, "0")}`;
-    try { setTimelogs(await attendanceMock.list({ from, to })); } catch {}
+    try {
+      const data = await timeLogApi.list("", from, to);
+      setTimelogs(Array.isArray(data) ? data : data.content || []);
+    } catch {}
   }
 
   function showMsg(type: string, text: string) {
@@ -76,8 +81,8 @@ export default function AttendancePage() {
 
   async function handleSaveShift() {
     try {
-      if (editShift) await shiftMock.updateShift(editShift.id, shiftForm);
-      else await shiftMock.createShift(shiftForm);
+      if (editShift) await shiftApi.update(editShift.id, shiftForm);
+      else await shiftApi.create(shiftForm);
       setShowShiftForm(false); setEditShift(null);
       setShiftForm({ maCa: "", tenCa: "", loaiCa: "HANH_CHINH", gioBatDau: "08:00", gioKetThuc: "17:00", soGioChuan: 8.0, quaNgay: false });
       loadShifts();
@@ -86,17 +91,17 @@ export default function AttendancePage() {
   }
 
   async function handleCloseShift(id: string) {
-    try { await shiftMock.closeShift(id); loadShifts(); showMsg("ok", "Dong ca thanh cong"); } catch (e: any) { showMsg("err", e.message); }
+    try { await shiftApi.close(id); loadShifts(); showMsg("ok", "Dong ca thanh cong"); } catch (e: any) { showMsg("err", e.message); }
   }
 
   async function handleAssign() {
     try {
       if (assignForm.mode === "bulk") {
         if (!assignForm.caId || !assignForm.tuNgay || !assignForm.denNgay) { showMsg("err", "Dien day du thong tin"); return; }
-        await shiftMock.assignBulk({ nhanVienIds: assignForm.nhanVienIds, caId: assignForm.caId, tuNgay: assignForm.tuNgay, denNgay: assignForm.denNgay });
+        await shiftAssignmentApi.assign({ nhanVienIds: assignForm.nhanVienIds, caId: assignForm.caId, tuNgay: assignForm.tuNgay, denNgay: assignForm.denNgay });
       } else {
         if (!assignForm.nhanVienIds[0] || !assignForm.caId || !assignForm.tuNgay) { showMsg("err", "Dien day du thong tin"); return; }
-        await shiftMock.assignSingle({ nhanVienId: assignForm.nhanVienIds[0], caId: assignForm.caId, ngayApDung: assignForm.tuNgay });
+        await shiftAssignmentApi.assign({ nhanVienId: assignForm.nhanVienIds[0], caId: assignForm.caId, ngayApDung: assignForm.tuNgay });
       }
       setShowAssignForm(false); setAssignForm({ nhanVienIds: [], caId: "", tuNgay: "", denNgay: "", mode: "bulk" });
       loadAssignments();

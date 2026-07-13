@@ -1,7 +1,7 @@
 // T11: System Admin page (Company, Role, User, Audit)
 import { useState, useEffect } from "react";
 import { PageHeader } from "../components/SharedComponents";
-import { systemMock } from "../mock/system.mock";
+import { companyApi, userApi } from "../api";
 
 function Chip({ bg, color, children }: any) {
   return <span style={{ background: bg, color, padding: "2px 8px", borderRadius: 12, fontSize: 12 }}>{children}</span>;
@@ -23,6 +23,15 @@ function fmtDate(iso: string | null) {
   return new Date(iso).toLocaleString("vi-VN");
 }
 
+const ROLES = [
+  { code: "SYSTEM_ADMIN", name: "Quan tri he thong" },
+  { code: "COMPANY_ADMIN", name: "Quan tri cong ty" },
+  { code: "HR_MANAGER", name: "Quan ly Nhan su" },
+  { code: "ACCOUNTANT", name: "Ke toan" },
+  { code: "MANAGER", name: "Quan ly" },
+  { code: "EMPLOYEE", name: "Nhan vien" },
+];
+
 export default function SystemAdminPage() {
   const [tab, setTab] = useState<"company" | "user" | "audit">("company");
   const [companies, setCompanies] = useState<any[]>([]);
@@ -41,11 +50,17 @@ export default function SystemAdminPage() {
   async function loadData() {
     setLoading(true);
     try {
-      if (tab === "company") setCompanies(await systemMock.listCompanies());
-      else if (tab === "user") setUsers(await systemMock.listUsers());
+      if (tab === "company") {
+        const data = await companyApi.list();
+        setCompanies(Array.isArray(data) ? data : data.content || []);
+      }
+      else if (tab === "user") {
+        const data = await userApi.list("");
+        setUsers(Array.isArray(data) ? data : data.content || []);
+      }
       else if (tab === "audit") {
-        const r = await systemMock.listAudit({ page: 0, size: 20, ...(auditFilter.module ? { module: auditFilter.module } : {}) });
-        setAuditPage(r);
+        // audit not yet in api.ts; use empty for now
+        setAuditPage({ content: [], totalElements: 0 });
       }
     } finally { setLoading(false); }
   }
@@ -55,17 +70,17 @@ export default function SystemAdminPage() {
   }
 
   async function handleCreateCompany() {
-    try { await systemMock.createCompany(coForm); setShowCoForm(false); loadData(); showMsg("ok", "Tao cong ty thanh cong"); }
+    try { await companyApi.create(coForm); setShowCoForm(false); loadData(); showMsg("ok", "Tao cong ty thanh cong"); }
     catch (e: any) { showMsg("err", e.message); }
   }
 
   async function handleCreateUser() {
-    try { await systemMock.createUser(userForm); setShowUserForm(false); loadData(); showMsg("ok", "Tao tai khoan thanh cong"); }
+    try { await userApi.create(userForm); setShowUserForm(false); loadData(); showMsg("ok", "Tao tai khoan thanh cong"); }
     catch (e: any) { showMsg("err", e.message); }
   }
 
   async function handleLockUnlock(userId: string, lock: boolean) {
-    try { lock ? await systemMock.lockUser(userId) : await systemMock.unlockUser(userId); loadData(); showMsg("ok", lock ? "Khoa tai khoan" : "Mo khoa tai khoan"); }
+    try { lock ? await userApi.lock(userId) : await userApi.unlock(userId); loadData(); showMsg("ok", lock ? "Khoa tai khoan" : "Mo khoa tai khoan"); }
     catch (e: any) { showMsg("err", e.message); }
   }
 
@@ -142,7 +157,7 @@ export default function SystemAdminPage() {
                       <td style={{ padding: "10px 8px", fontSize: 13, color: "#475569" }}>{u.email}</td>
                       <td style={{ padding: "10px 8px" }}>
                         <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-                          {u.roleCodes.map((r: string) => <Chip key={r} bg="#ede9fe" color="#5b21b6">{r}</Chip>)}
+                          {(u.roleCodes || []).map((r: string) => <Chip key={r} bg="#ede9fe" color="#5b21b6">{r}</Chip>)}
                         </div>
                       </td>
                       <td style={{ padding: "10px 8px", textAlign: "center" }}><StatusChip status={u.trangThai} /></td>
@@ -239,7 +254,7 @@ export default function SystemAdminPage() {
             <div>
               <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 8 }}>Vai tro</label>
               <div style={{ display: "flex", flexDirection: "column", gap: 6, maxHeight: 160, overflowY: "auto" }}>
-                {systemMock.ROLES.map(role => (
+                {ROLES.map(role => (
                   <label key={role.code} style={{ display: "flex", gap: 8, alignItems: "center", cursor: "pointer" }}>
                     <input type="checkbox" checked={userForm.roleCodes.includes(role.code)} onChange={ev => setUserForm(f => ({ ...f, roleCodes: ev.target.checked ? [...f.roleCodes, role.code] : f.roleCodes.filter(c => c !== role.code) }))} />
                     <span style={{ fontSize: 13 }}>{role.code} — {role.name}</span>

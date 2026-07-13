@@ -1,8 +1,8 @@
 // T10: Leave request + OT page
 import { useState, useEffect } from "react";
 import { PageHeader } from "../components/SharedComponents";
-import { leaveMock, otMock, balanceMock } from "../mock/leave.mock";
-import { employeeMock } from "../mock/employee.mock";
+import { leaveRequestApi, otRequestApi, leaveBalanceApi } from "../api";
+import { employeeApi } from "../api";
 
 function Chip({ bg, color, children }: any) {
   return <span style={{ background: bg, color, padding: "2px 8px", borderRadius: 12, fontSize: 12 }}>{children}</span>;
@@ -20,6 +20,16 @@ function StatusChip({ status }: { status: string }) {
   const L: Record<string, string> = { CHO_DUYET: "Cho duyet", DUYET_CAP_1: "Da duyet cap 1", DA_DUYET: "Da duyet", TU_CHOI: "Tu choi", HUY: "Huy" };
   return <Chip bg={c.bg} color={c.color}>{L[status] || status}</Chip>;
 }
+
+const LOAI_PHEP_OPTIONS = [
+  { value: "PHEP_NAM", label: "Phep nam" },
+  { value: "PHEP_BU", label: "Phep bu" },
+  { value: "OM", label: "Om" },
+  { value: "THAI_SAN", label: "Thai san" },
+  { value: "KHONG_HUONG_LUONG", label: "Khong huong luong" },
+  { value: "CONG_TAC", label: "Cong tac" },
+  { value: "KHAC", label: "Khac" },
+];
 
 export default function LeavePage() {
   const [tab, setTab] = useState<"leave" | "ot" | "balance">("leave");
@@ -39,22 +49,37 @@ export default function LeavePage() {
   useEffect(() => { if (tab === "leave") loadLeave(); else if (tab === "ot") loadOT(); else loadBalance(); }, [tab]);
 
   async function loadEmployees() {
-    try { const r = await employeeMock.list({ page: 0, size: 100 }); setEmployees(r.content); } catch {}
+    try { const r = await employeeApi.list("", undefined, undefined, 0, 100); setEmployees(r.content); } catch {}
   }
 
   async function loadLeave() {
     setLoading(true);
-    try { setLeaveList(await leaveMock.list({})); } finally { setLoading(false); }
+    try {
+      const data = await leaveRequestApi.list();
+      setLeaveList(Array.isArray(data) ? data : data.content || []);
+    } finally { setLoading(false); }
   }
 
   async function loadOT() {
     setLoading(true);
-    try { setOtList(await otMock.list({})); } finally { setLoading(false); }
+    try {
+      const data = await otRequestApi.list();
+      setOtList(Array.isArray(data) ? data : data.content || []);
+    } finally { setLoading(false); }
   }
 
   async function loadBalance() {
     setLoading(true);
-    try { setBalance(await balanceMock.listByYear(new Date().getFullYear())); } finally { setLoading(false); }
+    try {
+      const allBalance: any[] = [];
+      for (const emp of employees.slice(0, 20)) {
+        try {
+          const b = await leaveBalanceApi.get(emp.nhanVienId, new Date().getFullYear());
+          if (b) allBalance.push({ ...b, nhanVienId: emp.nhanVienId });
+        } catch {}
+      }
+      setBalance(allBalance);
+    } finally { setLoading(false); }
   }
 
   function showMsg(type: string, text: string) {
@@ -63,7 +88,7 @@ export default function LeavePage() {
 
   async function handleCreateLeave() {
     try {
-      await leaveMock.create(leaveForm);
+      await leaveRequestApi.create(leaveForm);
       setShowLeaveForm(false);
       loadLeave();
       showMsg("ok", "Tao don nghi phep thanh cong");
@@ -72,7 +97,7 @@ export default function LeavePage() {
 
   async function handleCreateOT() {
     try {
-      await otMock.create(otForm);
+      await otRequestApi.create(otForm);
       setShowOtForm(false);
       loadOT();
       showMsg("ok", "Tao don OT thanh cong");
@@ -81,7 +106,7 @@ export default function LeavePage() {
 
   async function handleApprove(id: string, approve: boolean) {
     try {
-      await leaveMock.approveCap1(id, approve, "nv-5", "");
+      await leaveRequestApi.approveCap1(id, approve, "");
       loadLeave();
       showMsg("ok", approve ? "Duyet thanh cong" : "Tu choi thanh cong");
     } catch (e: any) { showMsg("err", e.message); }
@@ -89,7 +114,7 @@ export default function LeavePage() {
 
   async function handleApproveCap2(id: string, approve: boolean) {
     try {
-      await leaveMock.approveCap2(id, approve, "nv-1", "");
+      await leaveRequestApi.approveCap2(id, approve, "");
       loadLeave();
       showMsg("ok", approve ? "Duyet cap 2 thanh cong" : "Tu choi");
     } catch (e: any) { showMsg("err", e.message); }
@@ -97,7 +122,7 @@ export default function LeavePage() {
 
   async function handleApproveOTCap1(id: string, approve: boolean) {
     try {
-      await otMock.approveCap1(id, approve, "nv-5");
+      await otRequestApi.approveCap1(id, approve, "");
       loadOT();
       showMsg("ok", approve ? "Duyet OT cap 1" : "Tu choi OT");
     } catch (e: any) { showMsg("err", e.message); }
@@ -105,7 +130,7 @@ export default function LeavePage() {
 
   async function handleApproveOTCap2(id: string, approve: boolean) {
     try {
-      await otMock.approveCap2(id, approve, "nv-1");
+      await otRequestApi.approveCap2(id, approve, "");
       loadOT();
       showMsg("ok", approve ? "Duyet OT cap 2" : "Tu choi OT");
     } catch (e: any) { showMsg("err", e.message); }
@@ -156,7 +181,7 @@ export default function LeavePage() {
                     <tr key={l.id} style={{ borderTop: "1px solid #f1f5f9" }}>
                       <td style={{ padding: "10px 16px", fontFamily: "monospace", fontWeight: 700, fontSize: 13 }}>{l.maNv}</td>
                       <td style={{ padding: "10px 8px", fontSize: 13 }}>{l.hoTen}</td>
-                      <td style={{ padding: "10px 8px", textAlign: "center", fontSize: 13 }}>{leaveMock.LOAI_PHEP_OPTIONS.find(o => o.value === l.loaiNghiPhep)?.label || l.loaiNghiPhep}</td>
+                      <td style={{ padding: "10px 8px", textAlign: "center", fontSize: 13 }}>{LOAI_PHEP_OPTIONS.find(o => o.value === l.loaiNghiPhep)?.label || l.loaiNghiPhep}</td>
                       <td style={{ padding: "10px 8px", textAlign: "center", fontSize: 13, fontFamily: "monospace" }}>{l.tuNgay}</td>
                       <td style={{ padding: "10px 8px", textAlign: "center", fontSize: 13, fontFamily: "monospace" }}>{l.denNgay}</td>
                       <td style={{ padding: "10px 8px", textAlign: "center", fontSize: 13 }}>{l.soNgayNghi}</td>
@@ -286,7 +311,7 @@ export default function LeavePage() {
             </select>
             <label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>Loai nghi phep</label>
             <select style={inputStyle} value={leaveForm.loaiNghiPhep} onChange={e => setLeaveForm(f => ({ ...f, loaiNghiPhep: e.target.value }))}>
-              {leaveMock.LOAI_PHEP_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+              {LOAI_PHEP_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 16px" }}>
               <div><label style={{ fontSize: 13, color: "#64748b", display: "block", marginBottom: 4 }}>Tu ngay</label><input style={inputStyle} type="date" value={leaveForm.tuNgay} onChange={e => setLeaveForm(f => ({ ...f, tuNgay: e.target.value }))} /></div>

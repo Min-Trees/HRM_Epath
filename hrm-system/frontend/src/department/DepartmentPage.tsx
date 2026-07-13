@@ -1,7 +1,7 @@
 // T04: Department (PhongBan) + Salary Grade (NgachBacLuong) Page
 import { useState, useEffect } from "react";
 import { PageHeader } from "../components/SharedComponents";
-import { deptMock, salaryGradeMock } from "../mock/department.mock";
+import { departmentApi, salaryGradeApi } from "../api";
 
 interface Dept {
   phongBanId: string;
@@ -87,10 +87,10 @@ export default function DepartmentPage() {
     setLoading(true);
     try {
       if (tab === "dept") {
-        const data = await deptMock.listDept("flat");
-        setDepts(data);
+        const data = await departmentApi.list("flat");
+        setDepts(Array.isArray(data) ? data : data.content || []);
       } else {
-        const data = await salaryGradeMock.listGrades();
+        const data = await salaryGradeApi.list() as any;
         setGrades(Array.isArray(data) ? data : data.content || []);
       }
     } finally { setLoading(false); }
@@ -104,9 +104,9 @@ export default function DepartmentPage() {
   async function handleSaveDept() {
     try {
       if (editDept) {
-        await deptMock.updateDept(editDept.phongBanId, deptForm);
+        await departmentApi.update(editDept.phongBanId, { ...deptForm, phongBanChaId: deptForm.phongBanChaId || null });
       } else {
-        await deptMock.createDept(deptForm);
+        await departmentApi.create({ ...deptForm, phongBanChaId: deptForm.phongBanChaId || null });
       }
       setShowDeptForm(false); setEditDept(null); setDeptForm({ maPhongBan: "", tenPhongBan: "", phongBanChaId: "", dinhBien: 0 });
       loadData();
@@ -116,7 +116,7 @@ export default function DepartmentPage() {
 
   async function handleCloseDept(id: string) {
     try {
-      await deptMock.closeDept(id);
+      await departmentApi.close(id);
       loadData();
       showMsg("ok", "Dong phong ban thanh cong");
     } catch (e: any) { showMsg("err", e.message); }
@@ -125,9 +125,9 @@ export default function DepartmentPage() {
   async function handleSaveGrade() {
     try {
       if (editGrade) {
-        await salaryGradeMock.updateGrade(editGrade.id, gradeForm);
+        await salaryGradeApi.update(editGrade.id, { maNgach: gradeForm.maNgach, tenNgach: gradeForm.tenNgach, soBac: gradeForm.soBac, luongCoSo: gradeForm.luongCoSo, heSo: gradeForm.heSo });
       } else {
-        await salaryGradeMock.createGrade(gradeForm);
+        await salaryGradeApi.create({ maNgach: gradeForm.maNgach, tenNgach: gradeForm.tenNgach, soBac: gradeForm.soBac, luongCoSo: gradeForm.luongCoSo, heSo: gradeForm.heSo });
       }
       setShowGradeForm(false); setEditGrade(null); setGradeForm({ maNgach: "", tenNgach: "", soBac: 5, luongCoSo: 0, heSo: 1.0 });
       loadData();
@@ -137,7 +137,7 @@ export default function DepartmentPage() {
 
   async function handleCloseGrade(id: string) {
     try {
-      await salaryGradeMock.closeGrade(id);
+      await salaryGradeApi.close(id);
       loadData();
       showMsg("ok", "Dong ngach thanh cong");
     } catch (e: any) { showMsg("err", e.message); }

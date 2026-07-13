@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { kpiMock } from "../mock/kpi.mock";
+import { kpiApi } from "../api";
 
 export default function KpiPage() {
   const [cycles, setCycles] = useState<any[]>([]);
@@ -17,19 +17,19 @@ export default function KpiPage() {
   const [xepLoaiCuoi, setXepLoaiCuoi] = useState("A");
   const [heSoThuong, setHeSoThuong] = useState("1.5");
 
-  useEffect(() => { kpiMock.listCycles().then(setCycles); }, []);
+  useEffect(() => { kpiApi.listCycles().then((r) => setCycles(Array.isArray(r) ? r : r.content || [])); }, []);
 
   const onSelectCycle = async (cycle: any) => {
     setSelectedCycle(cycle);
-    const list = await kpiMock.listAssignments(cycle.cycleId);
-    setAssignments(list);
+    const list = await kpiApi.listAssignments(cycle.cycleId);
+    setAssignments(Array.isArray(list) ? list : list.content || []);
     setSelectedAssign(null);
     setView("assignments");
   };
 
   const submitSelf = async () => {
     if (!selectedAssign) return;
-    const updated = await kpiMock.selfAssess(selectedAssign.assignmentId, {
+    const updated = await kpiApi.selfAssess(selectedAssign.assignmentId, {
       diemTuDanhGia: Number(diemTuDanhGia),
       tyLeHoanThanh: Number(tyLeHT),
       nhanXetNv: nhanXetNV,
@@ -41,7 +41,7 @@ export default function KpiPage() {
 
   const submitReview = async () => {
     if (!selectedAssign) return;
-    const updated = await kpiMock.managerReview(selectedAssign.assignmentId, {
+    const updated = await kpiApi.managerReview(selectedAssign.assignmentId, {
       diemManager: Number(diemManager),
       xepLoaiDeXuat,
       nhanXetManager,
@@ -53,7 +53,7 @@ export default function KpiPage() {
 
   const submitApprove = async () => {
     if (!selectedAssign) return;
-    const updated = await kpiMock.hrApprove(selectedAssign.assignmentId, {
+    const updated = await kpiApi.hrApprove(selectedAssign.assignmentId, {
       diemCuoi: Number(diemCuoi),
       xepLoaiCuoi,
       heSoThuong: Number(heSoThuong),

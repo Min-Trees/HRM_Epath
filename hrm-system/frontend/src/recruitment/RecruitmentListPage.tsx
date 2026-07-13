@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { recruitmentMock } from "../mock/recruitment.mock";
+import { recruitmentApi } from "../api";
 
 export default function RecruitmentListPage() {
   const [tab, setTab] = useState<"yeu-cau" | "ung-vien" | "phong-van" | "quyet-dinh">("yeu-cau");
@@ -11,25 +11,26 @@ export default function RecruitmentListPage() {
   const [quyetDinhList, setQuyetDinhList] = useState<any[]>([]);
 
   useEffect(() => {
-    recruitmentMock.listYeuCau().then(setYeuCauList);
-    recruitmentMock.listUngVien().then(setUngVienList);
+    recruitmentApi.listYeuCau().then((r) => setYeuCauList(Array.isArray(r) ? r : r.content || []));
+    recruitmentApi.listUngVien().then((r) => setUngVienList(Array.isArray(r) ? r : r.content || []));
   }, []);
 
   const onSelectYC = async (yc: any) => {
     setSelectedYC(yc);
-    const uvs = await recruitmentMock.listUngVienTheoYeuCau(yc.yeuCauId);
+    const uvs = await recruitmentApi.listUngVienByYeuCau(yc.yeuCauId);
+    const freshUVs = Array.isArray(uvs) ? uvs : uvs.content || [];
     setUngVienList((prev) => {
-      const others = prev.filter((u) => !uvs.find((x: any) => x.ungVienId === u.ungVienId));
-      return [...others, ...uvs];
+      const others = prev.filter((u) => !freshUVs.find((x: any) => x.ungVienId === u.ungVienId));
+      return [...others, ...freshUVs];
     });
   };
 
   const onSelectUV = async (uv: any) => {
     setSelectedUV(uv);
-    const lichs = await recruitmentMock.listLichPV(uv.ungVienId);
-    setLichPVList(lichs);
-    const qdts = await recruitmentMock.listQuyetDinh(uv.ungVienId);
-    setQuyetDinhList(qdts);
+    const lichs = await recruitmentApi.listLichPV(uv.ungVienId);
+    setLichPVList(Array.isArray(lichs) ? lichs : lichs.content || []);
+    const qdts = await recruitmentApi.listQuyetDinh(uv.ungVienId);
+    setQuyetDinhList(Array.isArray(qdts) ? qdts : qdts.content || []);
   };
 
   return (

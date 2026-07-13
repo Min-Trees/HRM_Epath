@@ -1,8 +1,8 @@
 // T06: Contract management page
 import { useState, useEffect } from "react";
 import { PageHeader } from "../components/SharedComponents";
-import { contractMock } from "../mock/contract.mock";
-import { employeeMock } from "../mock/employee.mock";
+import { contractApi } from "../api";
+import { employeeApi } from "../api";
 
 const LOAI_HD: Record<string, string> = {
   THU_VIEC: "Thu viec", XAC_DINH_THOI_HAN: "Xac dinh thoi han",
@@ -41,15 +41,15 @@ export default function ContractPage() {
 
   async function loadEmployees() {
     try {
-      const r = await employeeMock.list({ page: 0, size: 100 });
+      const r = await employeeApi.list("", undefined, undefined, 0, 100);
       setEmployees(r.content);
     } catch {}
   }
 
   async function loadExpiring() {
     try {
-      const data = await contractMock.expiring(1, 90);
-      setExpiring(data);
+      const data = await contractApi.listExpiring(1, 90);
+      setExpiring(Array.isArray(data) ? data : []);
     } catch {}
   }
 
@@ -59,8 +59,8 @@ export default function ContractPage() {
     const nv = employees.find(e => e.nhanVienId === nvId);
     setSelectedEmp(nv);
     try {
-      const data = await contractMock.listByEmployee(nvId);
-      setEmpContracts(data);
+      const data = await contractApi.listByEmployee(nvId);
+      setEmpContracts(Array.isArray(data) ? data : data.content || []);
     } catch {}
   }
 
@@ -71,7 +71,7 @@ export default function ContractPage() {
   async function handleCreate() {
     if (!selectedNv) return;
     try {
-      await contractMock.create(selectedNv, form);
+      await contractApi.create(selectedNv, form);
       setShowCreate(false);
       selectEmployee(selectedNv);
       showMsg("ok", "Tao hop dong thanh cong");
@@ -81,7 +81,7 @@ export default function ContractPage() {
   async function handleAddendum(gocId: string) {
     if (!selectedNv) return;
     try {
-      await contractMock.createAddendum(gocId, addForm);
+      await contractApi.addAddendum(gocId, addForm);
       setShowAddendum(null);
       setAddForm({ ngayHieuLuc: "", ngayHetHieuLuc: "" });
       selectEmployee(selectedNv);
