@@ -10,7 +10,7 @@ export default function BhxhReportPage() {
   });
   const [denNgay, setDenNgay] = useState(() => new Date().toISOString().slice(0, 10));
   const [maDonVi, setMaDonVi] = useState("DV-001");
-  const [tenDonVi, setTenDonVi] = useState("Cong ty TNHH ABC");
+  const [tenDonVi, setTenDonVi] = useState("Công ty TNHH ABC");
   const [maSoThue, setMaSoThue] = useState("");
   const [report, setReport] = useState<any>(null);
   const [xmlContent, setXmlContent] = useState<string>("");
@@ -51,41 +51,41 @@ export default function BhxhReportPage() {
 
   return (
     <div style={{ padding: 24, fontFamily: "system-ui, sans-serif" }}>
-      <h2>BHXH Reports (T15)</h2>
+      <h2>Báo cáo BHXH (T15)</h2>
 
       <section style={{ background: "#fff", padding: 16, borderRadius: 8, marginBottom: 16, boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}>
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-end" }}>
           <div>
-            <label style={lblStyle}>Loai bao cao</label>
+            <label style={lblStyle}>Loại báo cáo</label>
             <select value={reportType} onChange={(e) => setReportType(e.target.value as any)} style={inpStyle}>
-              <option value="D02-LT">D02-LT (Bao tang/giam LD)</option>
-              <option value="D03-LT">D03-LT (Bao cap so BHXH)</option>
+              <option value="D02-LT">D02-LT (Báo tăng/giảm LĐ)</option>
+              <option value="D03-LT">D03-LT (Báo cấp sổ BHXH)</option>
             </select>
           </div>
           <div>
-            <label style={lblStyle}>Tu ngay</label>
+            <label style={lblStyle}>Từ ngày</label>
             <input type="date" value={tuNgay} onChange={(e) => setTuNgay(e.target.value)} style={inpStyle} />
           </div>
           <div>
-            <label style={lblStyle}>Den ngay</label>
+            <label style={lblStyle}>Đến ngày</label>
             <input type="date" value={denNgay} onChange={(e) => setDenNgay(e.target.value)} style={inpStyle} />
           </div>
           <div>
-            <label style={lblStyle}>Ma don vi BHXH</label>
+            <label style={lblStyle}>Mã đơn vị BHXH</label>
             <input value={maDonVi} onChange={(e) => setMaDonVi(e.target.value)} style={inpStyle} />
           </div>
           <div>
-            <label style={lblStyle}>Ten don vi</label>
+            <label style={lblStyle}>Tên đơn vị</label>
             <input value={tenDonVi} onChange={(e) => setTenDonVi(e.target.value)} style={{ ...inpStyle, width: 220 }} />
           </div>
           {reportType === "D02-LT" && (
             <div>
-              <label style={lblStyle}>Ma so thue</label>
+              <label style={lblStyle}>Mã số thuế</label>
               <input value={maSoThue} onChange={(e) => setMaSoThue(e.target.value)} style={inpStyle} />
             </div>
           )}
           <button onClick={generate} disabled={loading} style={{ ...btnStyle, background: "#0d9488" }}>
-            {loading ? "Dang tao..." : "Tao bao cao"}
+            {loading ? "Đang tạo..." : "Tạo báo cáo"}
           </button>
         </div>
       </section>
@@ -93,9 +93,9 @@ export default function BhxhReportPage() {
       {report && (
         <section style={{ background: "#fff", padding: 16, borderRadius: 8, marginBottom: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <h3 style={{ margin: 0 }}>{reportType} - Tong so dong: {report.tongSoDong || 0}</h3>
+            <h3 style={{ margin: 0 }}>{reportType} - Tổng số dòng: {report.tongSoDong || 0}</h3>
             <button onClick={downloadXml} disabled={!xmlContent} style={{ ...btnStyle, background: "#3b82f6" }}>
-              Tai file XML
+              Tải file XML
             </button>
           </div>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
