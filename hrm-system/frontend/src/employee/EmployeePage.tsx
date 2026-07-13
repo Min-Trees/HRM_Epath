@@ -1,8 +1,7 @@
 // T05: Employee management page
 import { useState, useEffect } from "react";
 import { PageHeader } from "../components/SharedComponents";
-import { employeeMock } from "../mock/employee.mock";
-import { deptMock } from "../mock/department.mock";
+import { employeeApi, departmentApi } from "../api";
 
 const TRANG_THAI_COLORS: Record<string, { bg: string; color: string }> = {
   UNG_VIEN: { bg: "#dbeafe", color: "#1e40af" },
@@ -54,26 +53,22 @@ export default function EmployeePage() {
 
   async function loadDepts() {
     try {
-      const data = await deptMock.listDept("flat");
-      setDepts(data);
+      const data = await departmentApi.list("flat");
+      setDepts(Array.isArray(data) ? data : data.content || []);
     } catch {}
   }
 
   async function loadList() {
     setLoading(true);
     try {
-      const params: any = { page: 0, size: 50 };
-      if (q) params.q = q;
-      if (phongBanFilter) params.phongBanId = phongBanFilter;
-      if (trangThaiFilter) params.trangThai = trangThaiFilter;
-      const r = await employeeMock.list(params);
+      const r = await employeeApi.list(q, phongBanFilter, trangThaiFilter, 0, 50);
       setList(r.content); setTotal(r.totalElements);
     } finally { setLoading(false); }
   }
 
   async function selectEmp(id: string) {
     try {
-      const emp = await employeeMock.get(id);
+      const emp = await employeeApi.get(id);
       setSelected(emp); setEmpTab("info");
     } catch {}
   }
@@ -85,7 +80,7 @@ export default function EmployeePage() {
   async function handleCreate() {
     const dept = depts.find(d => d.phongBanId === form.phongBanId);
     try {
-      const created = await employeeMock.create({ ...form, phongBan: dept?.tenPhongBan || "" });
+      const created = await employeeApi.create({ ...form, phongBan: dept?.tenPhongBan || "" });
       showMsg("ok", "Tao nhan vien thanh cong");
       setShowCreate(false);
       setForm({ hoTen: "", soCccd: "", ngayCapCccd: "", noiCapCccd: "", ngaySinh: "", gioiTinh: "NAM", diaChiThuongTru: "", diaChiLienLac: "", soDienThoai: "", email: "", phongBanId: "", phongBan: "", ngachBacId: "", ngachBac: "", ngayVaoLam: "", maSoThue: "", quanLyTrucTiepId: "" });
@@ -97,7 +92,7 @@ export default function EmployeePage() {
   async function handleAddDep() {
     if (!selected) return;
     try {
-      await employeeMock.createDependent(selected.nhanVienId, depForm);
+      await employeeApi.addDependent(selected.nhanVienId, depForm);
       setDepForm({ hoTen: "", quanHe: "", ngaySinh: "", soCccd: "", ngheNghiep: "", tuNgay: "" });
       selectEmp(selected.nhanVienId);
       showMsg("ok", "Them nguoi phu thuoc thanh cong");
@@ -107,7 +102,7 @@ export default function EmployeePage() {
   async function handleDelDep(depId: string) {
     if (!selected) return;
     try {
-      await employeeMock.deleteDependent(selected.nhanVienId, depId);
+      await employeeApi.deleteDependent(selected.nhanVienId, depId);
       selectEmp(selected.nhanVienId);
       showMsg("ok", "Xoa thanh cong");
     } catch (e: any) { showMsg("err", e.message); }
@@ -116,7 +111,7 @@ export default function EmployeePage() {
   async function handleAddWH() {
     if (!selected) return;
     try {
-      await employeeMock.createWorkHistory(selected.nhanVienId, whForm);
+      await employeeApi.addWorkHistory(selected.nhanVienId, whForm);
       setWhForm({ tuNgay: "", denNgay: "", phongBan: "", chucDanh: "", ghiChu: "" });
       selectEmp(selected.nhanVienId);
       showMsg("ok", "Them qua trinh cong tac thanh cong");
@@ -126,7 +121,7 @@ export default function EmployeePage() {
   async function handleDelWH(whId: string) {
     if (!selected) return;
     try {
-      await employeeMock.deleteWorkHistory(selected.nhanVienId, whId);
+      await employeeApi.deleteWorkHistory(selected.nhanVienId, whId);
       selectEmp(selected.nhanVienId);
     } catch {}
   }

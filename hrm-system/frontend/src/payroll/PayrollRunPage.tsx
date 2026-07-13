@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { payrollRunMock } from "../mock/payroll-run.mock";
+import { payrollRunApi } from "../api";
 
 const STATUS_COLORS: Record<string, string> = {
   CHO_CHAY: "#94a3b8",
@@ -18,13 +18,13 @@ export default function PayrollRunPage() {
   const [newThang, setNewThang] = useState(new Date().getMonth() + 1);
   const [newNam, setNewNam] = useState(new Date().getFullYear());
 
-  const refresh = () => payrollRunMock.list().then(setRuns);
+  const refresh = () => payrollRunApi.list().then((r) => setRuns(Array.isArray(r) ? r : r.content || []));
 
   useEffect(() => { refresh(); }, []);
 
   const create = async () => {
     try {
-      await payrollRunMock.create(newThang, newNam);
+      await payrollRunApi.create(newThang, newNam);
       await refresh();
       setCreating(false);
     } catch (e: any) {
@@ -34,25 +34,35 @@ export default function PayrollRunPage() {
 
   const transition = async (action: string) => {
     if (!selected) return;
-    await payrollRunMock.transition(selected.kyLinhId, action);
+    switch (action) {
+      case "start": await payrollRunApi.start(selected.kyLinhId); break;
+      case "approve-cap-1": await payrollRunApi.approveCap1(selected.kyLinhId); break;
+      case "approve-cap-2": await payrollRunApi.approveCap2(selected.kyLinhId); break;
+      case "pay-paid": await payrollRunApi.markPaid(selected.kyLinhId); break;
+      case "cancel": await payrollRunApi.cancel(selected.kyLinhId, "Huy boi nguoi dung"); break;
+    }
     await refresh();
-    const updated = await payrollRunMock.findById(selected.kyLinhId);
+    const updated = await payrollRunApi.get(selected.kyLinhId);
     setSelected(updated);
   };
 
-  const downloadPayslip = (kyLinhId: string, nvId: string, maNv: string) => {
-    const html = payrollRunMock.renderPayslipHtml(kyLinhId, nvId);
-    const blob = new Blob([html], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `phieu-luong-${maNv}.html`;
-    a.click();
-    URL.revokeObjectURL(url);
+  const downloadPayslip = async (kyLinhId: string, nvId: string, maNv: string) => {
+    try {
+      const html = await payrollRunApi.getPayslip(kyLinhId, nvId);
+      const blob = new Blob([html], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `phieu-luong-${maNv}.html`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e: any) {
+      alert(e.message);
+    }
   };
 
   const onSelect = async (r: any) => {
-    const full = await payrollRunMock.findById(r.kyLinhId);
+    const full = await payrollRunApi.get(r.kyLinhId);
     setSelected(full);
   };
 

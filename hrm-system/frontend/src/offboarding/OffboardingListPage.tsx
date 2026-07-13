@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { offboardingApi } from "../mock/offboarding.mock";
+import { offboardingApi } from "../api";
 
 export default function OffboardingListPage() {
   const navigate = useNavigate();
@@ -9,7 +9,7 @@ export default function OffboardingListPage() {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    offboardingApi.list({ page: 0, size: 50 }).then((r) => {
+    offboardingApi.list(0, 50).then((r) => {
       setData(r);
       setLoading(false);
     });

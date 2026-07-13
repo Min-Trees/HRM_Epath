@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { trainingMock } from "../mock/training.mock";
+import { trainingApi } from "../api";
 
 const STATUS_COLORS: Record<string, string> = {
   // Chuong trinh
@@ -14,7 +14,7 @@ const STATUS_COLORS: Record<string, string> = {
   XUAT_SAC: "#059669", TOT: "#10b981", TRUNG_BINH: "#3b82f6", YEU: "#ef4444", KHONG_DANH_GIA: "#94a3b8",
 };
 
-const LOAI_OPTIONS = ["KY_NANG_MEMM","KY_NANG_CHUYEN_MON","AN_TOAN_LAO_DONG","LANG_DAO_VAN_HOA","QUAN_LY","CHUNG_CHI_BAT_BUOC","KHAC"];
+const LOAI_OPTIONS = ["KY_NANG_MEM","KY_NANG_CHUYEN_MON","AN_TOAN_LAO_DONG","LANG_DAO_VAN_HOA","QUAN_LY","CHUNG_CHI_BAT_BUOC","KHAC"];
 
 export default function TrainingPage() {
   const [tab, setTab] = useState<"ct" | "lop" | "dk" | "dg">("ct");
@@ -25,50 +25,48 @@ export default function TrainingPage() {
   const [showLopForm, setShowLopForm] = useState(false);
   const [showDkForm, setShowDkForm] = useState(false);
   const [showDgForm, setShowDgForm] = useState<string | null>(null);
-  const [selectedCt, setSelectedCt] = useState<any>(null);
-  const [selectedLop, setSelectedLop] = useState<any>(null);
 
   const refresh = async () => {
     const [ct, lop, dk] = await Promise.all([
-      trainingMock.listChuongTrinh() as Promise<any[]>,
-      trainingMock.listLop() as Promise<any[]>,
-      trainingMock.listDangKy() as Promise<any[]>,
+      trainingApi.listChuongTrinh() as Promise<any[]>,
+      trainingApi.listLop() as Promise<any[]>,
+      trainingApi.listDangKyByLop("") as Promise<any[]>,
     ]);
-    setChuongTrinh(ct);
-    setLopHoc(lop);
-    setDangKy(dk);
+    setChuongTrinh(Array.isArray(ct) ? ct : []);
+    setLopHoc(Array.isArray(lop) ? lop : []);
+    setDangKy(Array.isArray(dk) ? dk : []);
   };
   useEffect(() => { refresh(); }, []);
 
   const ctCreate = async (form: any) => {
-    await trainingMock.createChuongTrinh(form);
+    await trainingApi.createChuongTrinh(form);
     setShowCtForm(false); await refresh();
   };
   const lopCreate = async (form: any) => {
-    await trainingMock.createLop(form);
+    await trainingApi.createLop(form);
     setShowLopForm(false); await refresh();
   };
   const ctPublish = async (id: string) => {
-    await trainingMock.congBoChuongTrinh(id);
+    await trainingApi.congBoChuongTrinh(id);
     await refresh();
   };
   const lopTransition = async (id: string, s: string) => {
-    await trainingMock.lopTransition(id, s);
+    await trainingApi.lopTransition(id, s);
     await refresh();
   };
   const dkCreate = async (form: any) => {
     try {
-      await trainingMock.dangKy(form);
+      await trainingApi.dangKy(form);
       setShowDkForm(false); await refresh();
     } catch (e: any) { alert(e.message); }
   };
   const dkDuyet = async (id: string, q: "DA_CHAP_NHAN" | "TU_CHOI") => {
-    await trainingMock.duyetDangKy(id, q);
+    await trainingApi.duyetDangKy(id, q);
     await refresh();
   };
   const dgSubmit = async (dkId: string, diem: any) => {
     try {
-      await trainingMock.danhGia(dkId, diem);
+      await trainingApi.danhGia({ dangKyId: dkId, ...diem });
       setShowDgForm(null); await refresh();
     } catch (e: any) { alert(e.message); }
   };
@@ -175,7 +173,7 @@ export default function TrainingPage() {
                 const lop = lopHoc.find((l) => l.id === d.lopHocId);
                 return (
                   <tr key={d.id} style={tr}>
-                    <td style={td}>{d.nhanVienId.slice(0, 8)}</td>
+                    <td style={td}>{d.nhanVienId?.slice(0, 8)}</td>
                     <td style={td}>{lop?.tenLop || "?"}</td>
                     <td style={td}>{d.ngayDangKy?.slice(0, 10)}</td>
                     <td style={td}><span style={{ ...chip, background: STATUS_COLORS[d.trangThai] }}>{d.trangThai}</span></td>
@@ -285,7 +283,7 @@ function DangKyForm({ lopHoc, onSubmit, onCancel }: any) {
 
 function DanhGiaForm({ dangKyId, onSubmit, onCancel }: any) {
   const [form, setForm] = useState({ diemNoiDung: 80, diemGiangVien: 80, diemThucHanh: 80, yKienNguoiHoc: "" });
-  return <Modal onClose={onCancel} title={`Đánh giá - ĐK ${dangKyId.slice(0, 8)}`}>
+  return <Modal onClose={onCancel} title={`Đánh giá - ĐK ${dangKyId?.slice(0, 8)}`}>
     <p style={{ color: "#64748b", fontSize: 13 }}>Điểm 0-100, trọng số: 40% nội dung + 30% giảng viên + 30% thực hành.</p>
     <Field label="Điểm nội dung"><input type="number" min={0} max={100} value={form.diemNoiDung} onChange={(e) => setForm({...form, diemNoiDung: Number(e.target.value)})} style={inp} /></Field>
     <Field label="Điểm giảng viên"><input type="number" min={0} max={100} value={form.diemGiangVien} onChange={(e) => setForm({...form, diemGiangVien: Number(e.target.value)})} style={inp} /></Field>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { quyetToanThueMock } from "../mock/quyet-toan-thue.mock";
+import { thueApi } from "../api";
 
 export default function QuyetToanThuePage() {
   const [tab, setTab] = useState<"02" | "05">("02");
@@ -13,16 +13,21 @@ export default function QuyetToanThuePage() {
 
   const generate = async () => {
     setLoading(true);
-    if (tab === "02") {
-      const r = await quyetToanThueMock.generate02QTT(nam, maDonVi, tenDonVi, maSoThue);
-      setReport(r);
-      setXmlContent(await quyetToanThueMock.exportXml02QTT(nam, maDonVi, tenDonVi, maSoThue));
-    } else {
-      const r = await quyetToanThueMock.generate05QTT(nam, maNvFor05());
-      setReport(r);
-      setXmlContent(await quyetToanThueMock.exportXml05QTT(nam, maNvFor05()));
+    try {
+      if (tab === "02") {
+        const r = await thueApi.generate02(nam, maDonVi, tenDonVi, maSoThue);
+        setReport(r);
+        setXmlContent(await thueApi.download02Xml(nam, maDonVi, tenDonVi, maSoThue));
+      } else {
+        const r = await thueApi.generate05(nam, maNvFor05(), tenDonVi, maSoThue);
+        setReport(r);
+        setXmlContent(await thueApi.download05Xml(nam, maNvFor05(), tenDonVi, maSoThue));
+      }
+    } catch (e: any) {
+      alert(e.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const maNvFor05 = () => {
